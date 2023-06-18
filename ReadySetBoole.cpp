@@ -37,8 +37,6 @@ unsigned int RSB::gray_code(unsigned int n)
 bool	RSB::eval_formula(const std::string& formula)
 {
 	std::stack<bool>	eval_stack;
-	//Tokenizer			tokenizer;
-    //std::vector<Token>	tokens = tokenizer.tokenize(formula);
 	
 	check_formula(formula);
 	for (char c: formula)
@@ -105,24 +103,9 @@ void	RSB::check_formula(const std::string& formula)
         switch (token.type)
 		{
             case TokenType::VARIABLE:
-				if (stack.size() >= 2)
-				{
-					std::stringstream error_message;
-					error_message << "Invalid operand '" << token.value << "'";
-					throw std::runtime_error(error_message.str());
-				}
-                //std::cout << "Variable";
-		//stack.push(token.value);
 				stack.push('1');
                 break;
             case TokenType::BOOLEAN:
-				if (stack.size() >= 2)
-				{
-					std::stringstream error_message;
-					error_message << "Invalid operand '" << token.value << "'";
-					throw std::runtime_error(error_message.str());
-				}
-                //std::cout << "Boolean";
 				stack.push(token.value);
                 break;
             case TokenType::NEGATION:
@@ -131,7 +114,6 @@ void	RSB::check_formula(const std::string& formula)
 	    			op1 = stack.top();
 					stack.pop();
 					stack.push(!op1);
-                	//std::cout << "Negation";
 				}
 				else
 				{
@@ -149,7 +131,6 @@ void	RSB::check_formula(const std::string& formula)
 					stack.pop();
 					bool result = eval_operator(token.value, op1, op2);
 					stack.push(result);
-					//std::cout << "OPERATOR";
 				}
 				else
 				{
@@ -159,29 +140,11 @@ void	RSB::check_formula(const std::string& formula)
 				}
 				break;
 		}
-		//std::cout << ", " << token.value << std::endl;
 	}
     if (stack.size() != 1)
 		throw std::runtime_error("Invalid formula");
-    //return tokens;
 }
-/*
-void	RSB::check_formula(const std::string& formula)
-{
-	size_t operand_count = 0;
-	size_t operator_count = 0;
 
-	for (char c : formula)
-	{
-		if (c == '!' || c == '&' || c == '|' || c == '^' || c == '>' || c == '=')
-			operator_count++;
-		else
-			operand_count++;
-	}
-	if (operand_count - operator_count != 1)
-		throw std::runtime_error("Invalid formula");
-};
-*/
 void	RSB::print_truth_table(const std::string& formula)
 {
 	size_t variable_count = 0;
@@ -201,6 +164,12 @@ void	RSB::print_truth_table(const std::string& formula)
 			std::cout << c << " | ";
 			variable_indice.push_back(i);
 			variable_count++;
+		}
+		else
+		{
+			std::stringstream error_message;
+			error_message << "Invalid symbol '" << c << "'";
+			throw std::runtime_error(error_message.str());
 		}
 	}
 	std::cout << "= |\n";
@@ -228,66 +197,102 @@ void	RSB::print_truth_table(const std::string& formula)
 	}
 };
 
-bool	isOperand(const char* c)
+static std::string	apply_negation(std::string& formula)
 {
-	while (*c != '\0')
-		c++;
-	c--;
-	if (*c >= 'A' && *c <= 'Z')
+	std::stack<std::string> stack;
+	std::string				temp;
+
+	for (char c : formula)
 	{
-		//std::cout << *c << std::endl;
-		return true;
+		if (isalpha(c))
+		{
+			if (!stack.empty())
+			{
+				temp = stack.top();
+				stack.pop();
+				stack.push(temp + c + "!");
+			}
+			else
+				stack.push(std::string(1, c) + "!");
+		}
+		else if (c == '!' || c == '&' || c == '|')
+		{
+			switch (c)
+			{
+        		case '!':
+					temp = stack.top();
+					stack.pop();
+        		    stack.push(temp.substr(0, temp.length() - 1));
+        		    break;
+        		case '&':
+					temp = stack.top();
+					stack.pop();
+        		    stack.push(temp + "|");
+        		    break;
+        		case '|':
+					temp = stack.top();
+					stack.pop();
+        		    stack.push(temp + "&");
+        		    break;
+			}
+		}
 	}
-	return false;
-}
+	return stack.top();
+};
 
 const std::string	RSB::negation_normal_form(const std::string& formula)
 {
 	std::stack<std::string> stack;
+	std::string temp, temp2;
 
+	check_formula(formula);
 	for (char c : formula)
 	{
-		if (c == '!' || c == '&' || c == '|' || c == '>' || c == '=')
+		if (isalpha(c))
+			stack.push(std::string(1, c));
+		else if (c == '!' || c == '&' || c == '|' || c == '>' || c == '=')
 		{
-			std::string operand1, operand2;
-			switch (c) {
-        			case '&': {
-        			    operand1 = stack.top(); stack.pop();
-        			    operand2 = stack.top(); stack.pop();
-				    if (isOperand(operand2.c_str())) 
-					    operand2.insert(operand2.size(), 1, '!');
-				    if (isOperand(operand1.c_str())) 
-					    operand1.insert(operand1.size(), 1, '!');
-        			    stack.push(operand2 + operand1 + "|");
-        			    break;
-        			}
-        			case '|': {
-        			    operand1 = stack.top(); stack.pop();
-        			    operand2 = stack.top(); stack.pop();
-				    if (isOperand(operand2.c_str())) 
-					    operand2.insert(operand2.size(), 1, '!');
-				    if (isOperand(operand1.c_str())) 
-					    operand1.insert(operand1.size(), 1, '!');
-        			    stack.push(operand2 + operand1 + "&");
-        			    break;
-        			}
-        			case '>': {
-        			    operand1 = stack.top(); stack.pop();
-        			    operand2 = stack.top(); stack.pop();
-        			    stack.push(operand2 + "!" + operand1 + "|");
-        			    break;
-        			}
-        			case '=': {
-        			    operand1 = stack.top(); stack.pop();
-        			    operand2 = stack.top(); stack.pop();
-        			    std::string nnf = operand2 + operand1 + "&" + operand2 + "!" + operand1 + "!&|";
-        			    stack.push(nnf);
-        			    break;
-        			}
+			if (c == '!')
+			{
+				if (!stack.empty())
+				{
+					temp = stack.top();
+					temp2 = apply_negation(temp);
+					stack.push(temp2);
+				}
+			}
+        	else if (c == '&' || c == '|')
+			{
+        	    temp = stack.top(); stack.pop();
+        	    temp2 = stack.top(); stack.pop();
+        	    stack.push(temp2 + temp + c);
+        	}
+        	else if (c == '>')
+			{
+        	    temp = stack.top(); stack.pop();
+        	    temp2 = stack.top(); stack.pop();
+        	    stack.push(temp2 + "!" + temp + "|");
+        	}
+        	else if (c == '=')
+			{
+        	    temp = stack.top(); stack.pop();
+        	    temp2 = stack.top(); stack.pop();
+        	    std::string nnf = temp2 + temp + "&" + temp2 + "!" + temp + "!&|";
+        	    stack.push(nnf);
 			}
 		}
 		else
-			stack.push(std::string(1, c));
+		{
+			std::stringstream error_message;
+			error_message << "Invalid symbol '" << c << "'";
+			throw std::runtime_error(error_message.str());
+		}
 	}
 	return stack.top();
+};
+
+const std::string	RSB::conjunctive_normal_form(const std::string& formula)
+{
+	check_formula(formula);
+	std::string temp_formula = negation_normal_form(formula);
 };

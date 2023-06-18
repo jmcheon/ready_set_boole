@@ -89,11 +89,22 @@ void	ex05(const std::string& formula)
 		std::cout << rsb.negation_normal_form(formula) << std::endl;
 }
 
-void	ex06()
+void	ex06(const std::string& formula)
 {
-	std::cout << "Running ex06 - truth table..." << std::endl;
+	std::cout << "Running ex06 - conjunctive normal form..." << std::endl;
 	RSB rsb;
-	rsb.print_truth_table("AB&C|");
+	if (formula.empty())
+	{
+		std::cout << rsb.conjunctive_normal_form("AB&!") << std::endl; // A!B!|
+		std::cout << rsb.conjunctive_normal_form("AB|!") << std::endl; // A!B!&
+		std::cout << rsb.conjunctive_normal_form("AB|C&") << std::endl; // AB|C&
+		std::cout << rsb.conjunctive_normal_form("AB|C|D|") << std::endl; // ABCD|||
+		std::cout << rsb.conjunctive_normal_form("AB&C&D&") << std::endl; // ABCD&&&
+		std::cout << rsb.conjunctive_normal_form("AB&!C!|") << std::endl; // A!B!C!||
+		std::cout << rsb.conjunctive_normal_form("AB|!C!&") << std::endl; // A!B!C!&&
+	}
+	else
+		std::cout << rsb.conjunctive_normal_form(formula) << std::endl;
 }
 
 void	ex07()
@@ -157,7 +168,7 @@ void	execute_exercises(int argc, char** argv)
 			ex05(formula);
 			break;
 		case 6:
-			ex06();
+			ex06(formula);
 			break;
 		case 7:
 			ex07();

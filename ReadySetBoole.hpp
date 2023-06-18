@@ -29,7 +29,7 @@ class RSB
 	// ex06 Conjunctive Normal Form
 	const std::string	conjunctive_normal_form(const std::string& formula);
 	// ex07 SAT
-	//bool	sat(formula: &str);
+	bool	sat(const std::string& formula);
 	// ex08 Powerset
 	//Vec<Vec<i32>>	powerset(set: &[i32]);
 	// ex09 Set evaluation
