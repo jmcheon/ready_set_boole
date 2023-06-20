@@ -1,4 +1,5 @@
 #include "ReadySetBoole.hpp"
+#include "RPNtree.hpp"
 
 void	ex00()
 {
@@ -89,6 +90,14 @@ void	ex05(const std::string& formula)
 		std::cout << rsb.negation_normal_form(formula) << std::endl;
 }
 
+void	ex05(const RPNNode* node)
+{
+	std::cout << "Running ex05 - negation normal form..." << std::endl;
+	RSB rsb;
+	if (node != nullptr)
+		std::cout << rsb.negation_normal_form(node) << std::endl;
+}
+
 void	ex06(const std::string& formula)
 {
 	std::cout << "Running ex06 - conjunctive normal form..." << std::endl;
@@ -109,9 +118,12 @@ void	ex06(const std::string& formula)
 
 void	ex07()
 {
-	std::cout << "Running ex07 - truth table..." << std::endl;
+	std::cout << "Running ex07 - sat..." << std::endl;
 	RSB rsb;
-	rsb.print_truth_table("AB&C|");
+	std::cout << rsb.sat("AB|") << std::endl; // true
+	std::cout << rsb.sat("AB&") << std::endl; // true
+	std::cout << rsb.sat("AA!&") << std::endl; // false
+	std::cout << rsb.sat("AA^") << std::endl; // false
 }
 
 void	ex08()
@@ -145,8 +157,28 @@ void	ex11()
 void	execute_exercises(int argc, char** argv)
 {
 	std::string formula;
+	std::unique_ptr<RPNNode> rpn;
 	if (argc == 3)
+	{
 		formula = argv[2];
+		try
+		{
+			std::cout << "check formula...\n";
+			std::cout << "parsed formula:";
+ 			rpn = build_tree(formula);
+    	    print_node(rpn.get());
+			std::cout << std::endl;
+    	    print_tree(rpn.get());
+			std::cout << std::endl;
+			std::cout << "reversed formula:";
+			reverse_traversal(rpn.get());
+			std::cout << std::endl;
+    	    //print_tree(rpn.get());
+    	} catch (const std::runtime_error& e)
+		{
+    	    std::cerr << "Error: " << e.what() << std::endl;
+    	}
+	}
 	switch (atoi(argv[1]))
 	{
 		case 0:
@@ -166,6 +198,7 @@ void	execute_exercises(int argc, char** argv)
 			break;
 		case 5:
 			ex05(formula);
+			//ex05(rpn.get());
 			break;
 		case 6:
 			ex06(formula);

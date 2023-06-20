@@ -41,6 +41,7 @@ bool	RSB::eval_formula(const std::string& formula)
 	check_formula(formula);
 	for (char c: formula)
 	{
+		//std::cout << c << std::endl;
 		if (std::isdigit(c))
 		{
 			bool value = c == '1';
@@ -63,12 +64,12 @@ bool	RSB::eval_formula(const std::string& formula)
 			eval_stack.push(result);
 		}
 		else
-			throw std::runtime_error("Invalid symbol");
+			throw std::runtime_error("e Invalid symbol");
 	}
 	return eval_stack.top();
 };
 
-bool	RSB::eval_operator(char op, char operand1, char operand2)
+bool	RSB::eval_operator(char op, bool operand1, bool operand2)
 {
 	switch (op)
 	{
@@ -85,7 +86,7 @@ bool	RSB::eval_operator(char op, char operand1, char operand2)
 		case '=':
 			return operand1 == operand2;
 		default:
-			throw std::runtime_error("Invalid symbol");
+			throw std::runtime_error("o Invalid symbol");
 	}
 };
 
@@ -152,6 +153,8 @@ void	RSB::print_truth_table(const std::string& formula)
 	std::string temp_formula = formula;
 	// store all variable indice to replace them with boolen value for eval_formula()
 	std::vector<size_t> variable_indice;
+	std::vector<std::pair<char, size_t> > variables;
+	//bool variable_map[26];
 
 	check_formula(formula);
 	// print column headers
@@ -161,11 +164,25 @@ void	RSB::print_truth_table(const std::string& formula)
 		char c = formula[i];
 		if (isalpha(c))
 		{
+			bool exist = false;
+			for (size_t j = 0; j < variables.size(); ++j)
+			{
+				if (variables[j].first == c)
+				{
+					exist = true;
+					//variable_count++;
+					break;
+				}
+			}
+			if (!exist)
+			{
 			std::cout << c << " | ";
 			variable_indice.push_back(i);
 			variable_count++;
+			variables.emplace_back(c, variable_count);
+			}
 		}
-		else
+		else if (c == '0' || c == '1')
 		{
 			std::stringstream error_message;
 			error_message << "Invalid symbol '" << c << "'";
@@ -186,12 +203,18 @@ void	RSB::print_truth_table(const std::string& formula)
 	for (size_t i = 0; i < rows; ++i)
 	{
 		std::cout << "| ";
-		size_t index = 0;
-		for (int j = variable_count - 1; j >= 0; --j)
+		//size_t index = 0;
+		//for (int j = variable_count - 1; j >= 0; --j)
+		std::string temp_formula = formula;
+		for (const auto& variable : variables)
 		{
-			size_t value = (i >> j) & 1;
+			//size_t value = (i >> j) & 1;
+			size_t value = (i >> (variable.second - 1)) & 1;
 			std::cout << value << " | ";
-			temp_formula[variable_indice[index++]] = value + '0';
+			//temp_formula[variable_indice[index++]] = value + '0';
+			//std::cout << variable.first << variable.second << std::endl;
+			std::replace(temp_formula.begin(), temp_formula.end(), variable.first, (char)(value + '0'));
+			//std::cout << temp_formula << std::endl;
 		}
 		std::cout << eval_formula(temp_formula) << " |\n";
 	}
@@ -291,8 +314,131 @@ const std::string	RSB::negation_normal_form(const std::string& formula)
 	return stack.top();
 };
 
+const std::string	RSB::negation_normal_form(const RPNNode* node, bool negate)
+{
+	std::string converted = "";
+
+	if (node == nullptr)
+		return "";
+	if (const VariableNode* variable_node = dynamic_cast<const VariableNode*>(node))
+	{
+		std::cout << std::endl;
+		std::cout << variable_node->get_variable() << std::endl;
+		converted += variable_node->get_variable();
+		if (negate)
+			converted += '!';
+	}
+	else if (const UnaryOperatorNode* unary_node = dynamic_cast<const UnaryOperatorNode*>(node))
+	{
+		const RPNNode* operand = unary_node->get_operand();
+        if (const VariableNode* operandVariableNode = dynamic_cast<const VariableNode*>(operand))
+		{
+            converted += operandVariableNode->get_variable();
+            converted += unary_node->get_operator();
+		}
+        else if (const BinaryOperatorNode* operandBinaryNode = dynamic_cast<const BinaryOperatorNode*>(operand))
+		{
+			std::cout << std::endl;
+			std::cout << operandBinaryNode->get_operator() << std::endl;
+            converted += negation_normal_form(operandBinaryNode, true);
+            converted += unary_node->get_operator();
+		}
+        else if (const UnaryOperatorNode* operandUnaryNode = dynamic_cast<const UnaryOperatorNode*>(operand))
+		{
+        	converted += negation_normal_form(operandUnaryNode, true);
+            converted += unary_node->get_operator();
+		}
+		//std::cout << std::endl;
+		//std::cout << unary_node->get_operand() << std::endl;
+		//temp_node = unary_node->get_operand()
+		//if (const VariableNode* operand_node = dynamic_cast<const VariableNode*>(unary_node->get_operand()))
+		//{
+        //    converted += operand_node->get_variable();
+		//	std::cout << std::endl;
+		//	std::cout << operand_node->get_variable() << std::endl;
+		//}
+        //else
+        //    converted += negation_normal_form(unary_node->get_operand());
+		//std::cout << std::endl;
+		//std::cout << unary_node->get_operator() << std::endl;
+		converted += unary_node->get_operator();
+		//converted += negation_normal_form(unary_node->get_operand());
+	}
+	else if (const BinaryOperatorNode* binary_node = dynamic_cast<const BinaryOperatorNode*>(node))
+	{
+		//std::cout << std::endl;
+		//std::cout << binary_node->get_left() << std::endl;
+		std::string left = negation_normal_form(binary_node->get_left());
+		std::cout << "left:" << left << std::endl;
+		std::string right = negation_normal_form(binary_node->get_right());
+		if (negate) {
+            converted += left + '!';
+        } else {
+            converted += left;
+        }
+		converted += binary_node->get_operator();
+        converted += right;
+	}
+	return converted;
+};
+
 const std::string	RSB::conjunctive_normal_form(const std::string& formula)
 {
 	check_formula(formula);
 	std::string temp_formula = negation_normal_form(formula);
+	return NULL;
+};
+
+
+bool	RSB::sat(const std::string& formula)
+{
+	size_t variable_count = 0;
+	size_t rows = 0;
+	std::string temp_formula = formula;
+	std::vector<size_t> variable_indice;
+	std::vector<std::pair<char, size_t> > variables;
+
+	check_formula(formula);
+	for (size_t i = 0; i < formula.length(); ++i)
+	{
+		char c = formula[i];
+		if (isalpha(c))
+		{
+			bool exist = false;
+			for (size_t j = 0; j < variables.size(); ++j)
+			{
+				if (variables[j].first == c)
+				{
+					exist = true;
+					break;
+				}
+			}
+			if (!exist)
+			{
+				variable_indice.push_back(i);
+				variable_count++;
+				variables.emplace_back(c, variable_count);
+			}
+		}
+		else if (c == '0' || c == '1')
+		{
+			std::stringstream error_message;
+			error_message << "Invalid symbol '" << c << "'";
+			throw std::runtime_error(error_message.str());
+		}
+	}
+	rows = 1 << variable_count;
+
+	for (size_t i = 0; i < rows; ++i)
+	{
+		std::string temp_formula = formula;
+		for (const auto& variable : variables)
+		{
+			size_t value = (i >> (variable.second - 1)) & 1;
+			std::replace(temp_formula.begin(), temp_formula.end(), variable.first, (char)(value + '0'));
+		}
+		if (eval_formula(temp_formula))
+			return true;
+	}
+	return false;
 };

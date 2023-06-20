@@ -2,8 +2,10 @@
 #define READYSETBOOLE_HPP
 #include <iostream>
 #include <stack>
+#include <algorithm>
 #include <vector>
 #include "Tokenizer.hpp"
+#include "RPNtree.hpp"
 
 
 # define NUMBER_OF_EXERCISE 11
@@ -20,12 +22,13 @@ class RSB
 	unsigned int gray_code(unsigned int n);
 	// ex03 Boolean evaluation
 	bool	eval_formula(const std::string& formula);
-	bool	eval_operator(char op, char operand1, char operand2);
+	bool	eval_operator(char op, bool operand1, bool operand2);
 	void	check_formula(const std::string& formula);
 	// ex04 Truth table
 	void	print_truth_table(const std::string& formula);
 	// ex05 Negation Normal Form
 	const std::string	negation_normal_form(const std::string& formula);
+	const std::string	negation_normal_form(const RPNNode* node, bool negate=false);
 	// ex06 Conjunctive Normal Form
 	const std::string	conjunctive_normal_form(const std::string& formula);
 	// ex07 SAT
