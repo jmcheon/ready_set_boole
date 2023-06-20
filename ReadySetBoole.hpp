@@ -3,6 +3,7 @@
 #include <iostream>
 #include <stack>
 #include <algorithm>
+#include <functional>
 #include <vector>
 #include "Tokenizer.hpp"
 #include "RPNtree.hpp"
@@ -34,7 +35,8 @@ class RSB
 	// ex07 SAT
 	bool	sat(const std::string& formula);
 	// ex08 Powerset
-	//Vec<Vec<i32>>	powerset(set: &[i32]);
+	std::vector<std::vector<int> >	powerset(std::vector<int>& set);
+	void	generate_powerset(const std::vector<int>& set, std::vector<int>& current_set, int index, std::vector<std::vector<int> >& powerset);
 	// ex09 Set evaluation
 	//Vec<i32>	eval_set(formula: &str, sets: &[[i32]]);
 	// ex10 Curve

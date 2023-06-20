@@ -116,21 +116,47 @@ void	ex06(const std::string& formula)
 		std::cout << rsb.conjunctive_normal_form(formula) << std::endl;
 }
 
-void	ex07()
+void	ex07(const std::string& formula)
 {
 	std::cout << "Running ex07 - sat..." << std::endl;
 	RSB rsb;
-	std::cout << rsb.sat("AB|") << std::endl; // true
-	std::cout << rsb.sat("AB&") << std::endl; // true
-	std::cout << rsb.sat("AA!&") << std::endl; // false
-	std::cout << rsb.sat("AA^") << std::endl; // false
+	if (formula.empty())
+	{
+		std::cout << rsb.sat("AB|") << std::endl; // true
+		std::cout << rsb.sat("AB&") << std::endl; // true
+		std::cout << rsb.sat("AA!&") << std::endl; // false
+		std::cout << rsb.sat("AA^") << std::endl; // false
+	}
+	else
+		std::cout << rsb.sat(formula) << std::endl;
 }
 
-void	ex08()
+template <class T>
+std::ostream&	operator<<(std::ostream& cout, const std::vector<T>& vec){
+	cout << "{ ";
+
+	for (size_t i = 0; i < vec.size(); ++i)
+	{
+		if (i)
+			cout << ", ";
+		cout << vec[i];
+	}
+
+	cout << " }";
+	return cout;
+}
+
+void	ex08(int argc, char** argv)
 {
-	std::cout << "Running ex08 - truth table..." << std::endl;
+	std::cout << "Running ex08 - powerset..." << std::endl;
 	RSB rsb;
-	rsb.print_truth_table("AB&C|");
+	std::cout << "argc:" << argc << std::endl;
+	std::vector<int> set(argc - 2);
+	for (int i = 2; i < argc; ++i)
+		set[i - 2] = std::atoi(argv[i]);
+	std::vector<std::vector<int> > powerset = rsb.powerset(set);
+	std::cout << set.size() << " - " << set << std::endl;
+	std::cout << powerset << std::endl;
 }
 
 void	ex09()
@@ -204,10 +230,10 @@ void	execute_exercises(int argc, char** argv)
 			ex06(formula);
 			break;
 		case 7:
-			ex07();
+			ex07(formula);
 			break;
 		case 8:
-			ex08();
+			ex08(argc, argv);
 			break;
 		case 9:
 			ex09();
@@ -223,6 +249,64 @@ void	execute_exercises(int argc, char** argv)
 	}
 }
 
+bool	parse_formula(const std::string& formula)
+{
+	std::unique_ptr<RPNNode> rpn;
+	try
+	{
+		std::cout << "check formula...\n";
+ 		rpn = build_tree(formula);
+		std::cout << "parsed formula:";
+        print_node(rpn.get());
+		std::cout << std::endl;
+
+        print_tree(rpn.get());
+		std::cout << std::endl;
+
+		std::cout << "reversed formula:";
+		reverse_traversal(rpn.get());
+		std::cout << std::endl;
+    } catch (const std::runtime_error& e)
+	{
+        std::cerr << "Error: " << e.what() << std::endl;
+		return false;
+    }
+	return true;
+}
+
+void	execute_exercise(int argc, char** argv)
+{
+	std::string formula;
+	std::string exercise;
+	//std::function<void(const std::string&)> func_ptr;
+
+	if (argc >= 2)
+		exercise = argv[1];
+	if (exercise == "ex03" || exercise == "ex04" || exercise == "ex05" || exercise == "ex06" || exercise == "ex07")
+	{
+		if (argc >= 3)
+		{
+			formula = argv[2];
+			if (exercise != "ex03" && !parse_formula(formula))
+				return ;
+		}
+		if (exercise == "ex03")
+			ex03(formula);
+		else if (exercise == "ex04")
+			ex04(formula);
+		else if (exercise == "ex05")
+			ex05(formula);
+		else if (exercise == "ex06")
+			ex06(formula);
+		else if (exercise == "ex07")
+			ex07(formula);
+	}
+	else if (exercise == "ex08")
+		ex08(argc, argv);
+	else
+		std::cout << "Usage: " << argv[0] << " [0 ~ 11]" << std::endl;
+}
+
 int	main(int argc, char** argv)
 {
 	if (argc < 2) {
@@ -230,7 +314,7 @@ int	main(int argc, char** argv)
 		return (0);
 	}
 	try {
-		execute_exercises(argc, argv);
+		execute_exercise(argc, argv);
 	}
 	catch (const std::exception& e) {
 		std::cout << "Exception caught: " << e.what() << std::endl;

@@ -9,10 +9,10 @@ RM = /bin/rm -rf
 all: $(NAME)
 
 $(NAME): $(OBJS)
-	$(CC) $(CFLAGS) -o $(NAME) $(OBJS) -I ./
+	@$(CC) $(CFLAGS) -o $(NAME) $(OBJS) -I ./
 
 .cpp.o:
-	$(CC) $(CFLAGS) -c $< -o $@ -I ./
+	@$(CC) $(CFLAGS) -c $< -o $@ -I ./
 
 clean:
 	$(RM) $(OBJS)

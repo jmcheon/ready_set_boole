@@ -152,9 +152,7 @@ void	RSB::print_truth_table(const std::string& formula)
 	size_t rows = 0;
 	std::string temp_formula = formula;
 	// store all variable indice to replace them with boolen value for eval_formula()
-	std::vector<size_t> variable_indice;
 	std::vector<std::pair<char, size_t> > variables;
-	//bool variable_map[26];
 
 	check_formula(formula);
 	// print column headers
@@ -170,16 +168,14 @@ void	RSB::print_truth_table(const std::string& formula)
 				if (variables[j].first == c)
 				{
 					exist = true;
-					//variable_count++;
 					break;
 				}
 			}
 			if (!exist)
 			{
-			std::cout << c << " | ";
-			variable_indice.push_back(i);
-			variable_count++;
-			variables.emplace_back(c, variable_count);
+				std::cout << c << " | ";
+				variable_count++;
+				variables.emplace_back(c, variable_count);
 			}
 		}
 		else if (c == '0' || c == '1')
@@ -203,18 +199,12 @@ void	RSB::print_truth_table(const std::string& formula)
 	for (size_t i = 0; i < rows; ++i)
 	{
 		std::cout << "| ";
-		//size_t index = 0;
-		//for (int j = variable_count - 1; j >= 0; --j)
-		std::string temp_formula = formula;
+		temp_formula = formula;
 		for (const auto& variable : variables)
 		{
-			//size_t value = (i >> j) & 1;
 			size_t value = (i >> (variable.second - 1)) & 1;
 			std::cout << value << " | ";
-			//temp_formula[variable_indice[index++]] = value + '0';
-			//std::cout << variable.first << variable.second << std::endl;
 			std::replace(temp_formula.begin(), temp_formula.end(), variable.first, (char)(value + '0'));
-			//std::cout << temp_formula << std::endl;
 		}
 		std::cout << eval_formula(temp_formula) << " |\n";
 	}
@@ -395,7 +385,6 @@ bool	RSB::sat(const std::string& formula)
 	size_t variable_count = 0;
 	size_t rows = 0;
 	std::string temp_formula = formula;
-	std::vector<size_t> variable_indice;
 	std::vector<std::pair<char, size_t> > variables;
 
 	check_formula(formula);
@@ -415,7 +404,6 @@ bool	RSB::sat(const std::string& formula)
 			}
 			if (!exist)
 			{
-				variable_indice.push_back(i);
 				variable_count++;
 				variables.emplace_back(c, variable_count);
 			}
@@ -431,7 +419,7 @@ bool	RSB::sat(const std::string& formula)
 
 	for (size_t i = 0; i < rows; ++i)
 	{
-		std::string temp_formula = formula;
+		temp_formula = formula;
 		for (const auto& variable : variables)
 		{
 			size_t value = (i >> (variable.second - 1)) & 1;
@@ -441,4 +429,24 @@ bool	RSB::sat(const std::string& formula)
 			return true;
 	}
 	return false;
+};
+
+void	RSB::generate_powerset(const std::vector<int>& set, std::vector<int>& current_set, int index, std::vector<std::vector<int> >& powerset)
+{
+	powerset.push_back(current_set);
+	for (size_t i = index; i < set.size(); ++i)
+	{
+		current_set.push_back(set[i]);
+		generate_powerset(set, current_set, i + 1, powerset);
+		current_set.pop_back();
+	}
+};
+
+std::vector<std::vector<int> >	RSB::powerset(std::vector<int>& set)
+{
+	std::vector<std::vector<int> > powerset;
+	std::vector<int> current_set;
+
+	generate_powerset(set, current_set, 0, powerset);
+	return powerset;
 };
