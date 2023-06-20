@@ -41,25 +41,28 @@ void	print_node(const RPNNode* node)
 	std::cout << std::endl;
 }
 
-void	print_tree(const RPNNode* node, int indent)
+void	print_tree(const std::string& prefix, const RPNNode* node, bool is_left)
 {
-    if (node == nullptr) {
-        return;
-    }
+    if( node != nullptr )
+    {
+        std::cout << prefix;
+        std::cout << (is_left ? "└─" : "├─" );
 
-    std::cout << std::string(indent, ' ');
-	node->traverse();
-    std::cout << std::endl;
-    //std::cout << std::string(indent, ' ') << "Node Type: " << typeid(*node).name();
-    if (const UnaryOperatorNode* unary_node = dynamic_cast<const UnaryOperatorNode*>(node)) {
-        print_tree(unary_node->get_operand(), indent + 2);
-        return;
+		node->traverse();
+    	std::cout << std::endl;
+    	if (const UnaryOperatorNode* unary_node = dynamic_cast<const UnaryOperatorNode*>(node))
+        	print_tree(prefix + (is_left ? "   " : "│  "), unary_node->get_operand(), true);
+    	if (const BinaryOperatorNode* binary_node = dynamic_cast<const BinaryOperatorNode*>(node))
+		{
+        	print_tree(prefix + (is_left ? "   " : "   "), binary_node->get_right(), false);
+        	print_tree(prefix + (is_left ? "   " : "   "), binary_node->get_left(), true);
+    	}
     }
+}
 
-    if (const BinaryOperatorNode* binary_node = dynamic_cast<const BinaryOperatorNode*>(node)) {
-        print_tree(binary_node->get_right(), indent + 2);
-        print_tree(binary_node->get_left(), indent + 2);
-    }
+void	print_tree(const RPNNode* node)
+{
+    print_tree("", node, true);
 }
 
 void	reverse_traversal(const RPNNode* node)
