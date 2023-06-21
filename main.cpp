@@ -150,7 +150,7 @@ void	ex08(int argc, char** argv)
 {
 	std::cout << "Running ex08 - powerset..." << std::endl;
 	RSB rsb;
-	std::cout << "argc:" << argc << std::endl;
+	//std::cout << "argc:" << argc << std::endl;
 	std::vector<int> set(argc - 2);
 	for (int i = 2; i < argc; ++i)
 		set[i - 2] = std::atoi(argv[i]);
@@ -159,13 +159,110 @@ void	ex08(int argc, char** argv)
 	std::cout << powerset.size() << " - " << powerset << std::endl;
 }
 
-void	ex09()
+static std::vector<int>	parse_set(const char* str)
 {
-	std::cout << "Running ex09 - set evaluation..." << std::endl;
-	//RSB rsb;
+	std::vector<int> result;
+
+	//std::cout << *str << "|" << std::endl;
+	while(*str)
+	{
+		result.push_back(std::atoi(str));
+		while (*str && *str != ',')
+			str++;
+		if (*str == ',')
+			str++;
+	}
+	//std::cout << result << std::endl;
+	return result;
+}
+
+bool	parse_formula(const std::string& formula)
+{
+	std::unique_ptr<RPNNode> rpn;
+	try
+	{
+		//std::cout << "check formula...\n";
+ 		rpn = build_tree(formula);
+		std::cout << "formula: ";
+        print_node(rpn.get());
+		//std::cout << std::endl;
+
+        print_tree(rpn.get());
+		//std::cout << std::endl;
+
+		//std::cout << "reversed formula:";
+		//reverse_traversal(rpn.get());
+		std::cout << std::endl;
+    } catch (const std::runtime_error& e)
+	{
+        std::cerr << "Error: " << e.what() << std::endl;
+		return false;
+    }
+	return true;
+}
+
+bool	check_sets(const std::string& formula, const std::vector<std::vector<int> > sets, std::vector<char>& variables)
+{
+	//std::vector<char> variables;
+	size_t variable_count = 0;
+
+	for (char c : formula)
+	{
+		if (isalpha(c))
+		{
+			bool exist = false;
+			for (size_t j = 0; j < variables.size(); ++j)
+			{
+				if (variables[j] == c)
+				{
+					exist = true;
+					break;
+				}
+			}
+			if (!exist)
+			{
+				variable_count++;
+				variables.emplace_back(c);
+			}
+		}
+	}
+	if (sets.size() != variable_count)
+	{
+		std::cout << RED << "Error: Sets size and variable numbers don't match." << FIN << std::endl;
+		return false;
+	}
+	return true;
+}
+
+void	ex09(int argc, char** argv)
+{
+	std::cout << "\nRunning ex09 - set evaluation..." << std::endl;
+	const std::string formula = (std::string)argv[2];
+	std::vector<std::vector<int> > sets;
+	std::vector<char> variables;
+	RSB rsb;
+
+	for (int i = 3; i < argc; ++i)
+		sets.push_back(parse_set(argv[i]));	
+	if (!parse_formula(formula))
+		return ;
+	if (!check_sets(formula, sets, variables))
+		return ;
+	for (size_t i = 0; i < sets.size(); ++i)
+	{
+		if (sets.size())
+			std::cout << variables[i] << ": " << sets[i] << std::endl;
+	}
+	std::cout << GREEN << rsb.eval_set(formula, sets) << FIN << std::endl;
 
 /*
-	sets = { {0, 1, 2}, {0, 3, 4} };
+	for (int i = 2; i < argc; ++i)
+		set[i - 2] = std::atoi(argv[i]);
+	std::vector<std::vector<int> > powerset = rsb.powerset(set);
+	std::cout << set.size() << " - " << set << std::endl;
+	std::cout << powerset.size() << " - " << powerset << std::endl;
+
+	std::vector<int> sets = { {0, 1, 2}, {0, 3, 4} };
 	std::cout << rsb.eval_set("AB&", &sets) << std::endl; // [0]
 
 	sets = { {0, 1, 2}, {3, 4, 5} };
@@ -246,7 +343,7 @@ void	execute_exercises(int argc, char** argv)
 			ex08(argc, argv);
 			break;
 		case 9:
-			ex09();
+			ex09(argc, argv);
 			break;
 		case 10:
 			ex10();
@@ -257,31 +354,6 @@ void	execute_exercises(int argc, char** argv)
 		default:
 			std::cout << "Usage: " << argv[0] << " [0 ~ 11]" << std::endl;
 	}
-}
-
-bool	parse_formula(const std::string& formula)
-{
-	std::unique_ptr<RPNNode> rpn;
-	try
-	{
-		std::cout << "check formula...\n";
- 		rpn = build_tree(formula);
-		std::cout << "parsed formula:";
-        print_node(rpn.get());
-		std::cout << std::endl;
-
-        print_tree(rpn.get());
-		std::cout << std::endl;
-
-		std::cout << "reversed formula:";
-		reverse_traversal(rpn.get());
-		std::cout << std::endl;
-    } catch (const std::runtime_error& e)
-	{
-        std::cerr << "Error: " << e.what() << std::endl;
-		return false;
-    }
-	return true;
 }
 
 void	execute_exercise(int argc, char** argv)
@@ -313,6 +385,8 @@ void	execute_exercise(int argc, char** argv)
 	}
 	else if (exercise == "ex08")
 		ex08(argc, argv);
+	else if (exercise == "ex09")
+		ex09(argc, argv);
 	else
 		std::cout << "Usage: " << argv[0] << " [0 ~ 11]" << std::endl;
 }

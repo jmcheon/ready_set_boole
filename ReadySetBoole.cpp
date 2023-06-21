@@ -41,7 +41,6 @@ bool	RSB::eval_formula(const std::string& formula)
 	check_formula(formula);
 	for (char c: formula)
 	{
-		//std::cout << c << std::endl;
 		if (std::isdigit(c))
 		{
 			bool value = c == '1';
@@ -64,7 +63,7 @@ bool	RSB::eval_formula(const std::string& formula)
 			eval_stack.push(result);
 		}
 		else
-			throw std::runtime_error("e Invalid symbol");
+			throw std::runtime_error("Invalid symbol");
 	}
 	return eval_stack.top();
 };
@@ -86,7 +85,7 @@ bool	RSB::eval_operator(char op, bool operand1, bool operand2)
 		case '=':
 			return operand1 == operand2;
 		default:
-			throw std::runtime_error("o Invalid symbol");
+			throw std::runtime_error("Invalid symbol");
 	}
 };
 
@@ -447,9 +446,126 @@ std::vector<std::vector<int> >	RSB::powerset(std::vector<int>& set)
 	generate_powerset(set, current_set, 0, powerset);
 	return powerset;
 };
-/*
+
+template <class T>
+std::ostream&	operator<<(std::ostream& cout, const std::vector<T>& vec){
+	cout << "{ ";
+
+	for (size_t i = 0; i < vec.size(); ++i)
+	{
+		if (i)
+			cout << ", ";
+		cout << vec[i];
+	}
+
+	cout << " }";
+	return cout;
+}
+
 std::vector<int>	RSB::eval_set(const std::string& formula, const std::vector<std::vector<int> >& sets)
 {
+	std::string						temp_formula;
+	std::stack<std::vector<int> >	stack;
+	std::vector<int>				universal_set;
+	std::vector<char>				variables;
+	size_t							variable_count = 0;
 
+	for (const std::vector<int>& set : sets)
+	{
+		for (int element : set)
+		{
+			if (std::find(universal_set.begin(), universal_set.end(), element) == universal_set.end())
+                universal_set.push_back(element);
+		}
+	}
+
+	temp_formula = negation_normal_form(formula);
+	for (char c : temp_formula)
+	{
+		if (isalpha(c))
+		{
+			bool exist = false;
+			for (size_t j = 0; j < variables.size(); ++j)
+			{
+				if (variables[j] == c)
+				{
+					exist = true;
+					//std::cout << "sets[" << j << "]" << " - ";
+					//std::cout << c << ":" << sets[j] << std::endl;
+					stack.push(sets[j]);
+					break;
+				}
+			}
+			if (!exist)
+			{
+				//std::cout << "sets[" << variable_count << "]" << " - ";
+				//std::cout << c << ":" << sets[variable_count] << std::endl;
+				stack.push(sets[variable_count]);
+				variables.emplace_back(c);
+				variable_count++;
+			}
+		}
+		else if (c == '!') // Negation
+		{
+            std::vector<int> operand = stack.top(); stack.pop();
+            std::vector<int> result;
+
+            for (int element : universal_set)
+			{
+                if (std::find(operand.begin(), operand.end(), element) == operand.end())
+                    result.push_back(element);
+            }
+			//std::cout << "\t mid neg result:" << result << std::endl;
+            stack.push(result);
+		}
+		else if (c == '&' || c == '|' || c == '^' || c == '=' || c == '>')
+		{
+			std::vector<int> operand2 = stack.top(); stack.pop();
+			std::vector<int> operand1 = stack.top(); stack.pop();
+			std::vector<int> result;
+			if (c == '&') // Intersection
+			{
+				std::unordered_map<int, bool> set1_elements;
+				for (int element : operand1)
+					set1_elements[element] = true;
+				for (int element : operand2)
+				{
+					if (set1_elements[element])
+						result.push_back(element);
+				}
+			}
+			else if (c == '|') // Union
+			{
+				result = operand1;
+				for (int element : operand2)
+				{
+					if (std::find(result.begin(), result.end(), element) == result.end())
+						result.push_back(element);
+				}
+			}
+			else if (c == '^') // Symmetric difference
+			{
+				std::unordered_map<int, bool> set1_elements;
+				std::unordered_map<int, bool> set2_elements;
+
+				for (int element : operand1)
+					set1_elements[element] = true;
+				for (int element : operand2)
+				{
+					if (!set1_elements[element])
+						result.push_back(element);
+				}
+				for (int element : operand2)
+					set2_elements[element] = true;
+				for (int element : operand1)
+				{
+					if (!set2_elements[element])
+						result.push_back(element);
+				}
+			}
+			//std::cout << "\t mid result:" << result << std::endl;
+			stack.push(result);
+		}
+	}
+	return stack.top();
 };
-*/

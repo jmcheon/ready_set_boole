@@ -3,11 +3,20 @@
 #include <iostream>
 #include <stack>
 #include <algorithm>
+#include <unordered_map>
 #include <functional>
 #include <vector>
 #include "Tokenizer.hpp"
 #include "RPNtree.hpp"
 
+# define YELLOW "\033[0;38;5;220m"
+# define GREEN "\033[0;38;5;42m"
+# define RED "\033[0;38;5;196m"
+# define BLUE "\033[0;38;5;21m"
+# define PINK "\033[0;38;5;205m"
+# define PURPLE "\033[0;38;5;93m"
+# define ORANGE "\033[38;5;202m"
+# define FIN "\033[0m"
 
 # define NUMBER_OF_EXERCISE 11
 //static const char* sExerciseStrings[] = {};
