@@ -8,6 +8,7 @@
 #include <vector>
 #include "Tokenizer.hpp"
 #include "RPNtree.hpp"
+#include "exercise.hpp"
 
 # define YELLOW "\033[0;38;5;220m"
 # define GREEN "\033[0;38;5;42m"
@@ -18,11 +19,16 @@
 # define ORANGE "\033[38;5;202m"
 # define FIN "\033[0m"
 
-# define NUMBER_OF_EXERCISE 11
+# define MAX_EXERCISE_NUM 11
 //static const char* sExerciseStrings[] = {};
 
 typedef std::vector<int> t_set;
 typedef std::vector<std::vector<int> > t_powerset;
+typedef struct s_vec2s
+{
+	unsigned short x;
+	unsigned short y;
+} t_vec2s;
 
 class RSB
 {
@@ -52,9 +58,9 @@ class RSB
 	// ex09 Set evaluation
 	t_set	eval_set(const std::string& formula, const t_powerset& sets);
 	// ex10 Curve
-	//f64	map(x: u16, y: u16);
+	double	map(unsigned short x, unsigned short y);
 	// ex11 Inverse function
-	//(u16, u16)	reverse_map(n: f64);
+	t_vec2s	reverse_map(double n);
 };
 
 #endif

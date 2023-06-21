@@ -6,7 +6,7 @@ std::unique_ptr<RPNNode> build_tree(const std::string& formula)
 
 	for (char c : formula)
 	{
-		if (isalpha(c))
+		if (c >= 'A' && c <= 'Z')
 			stack.push(std::make_unique<VariableNode>(c));
 		else if (c == '!')
 		{

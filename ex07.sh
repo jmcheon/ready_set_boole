@@ -27,5 +27,5 @@ elif [ $# -eq 1 ]; then
 	run_or_make "$program" "$exercise" "$1"
 else
 	echo "Wrong number of arguments provided: $@"
-	echo "Usage: ./$script_name [formula]"
+	echo "Usage: ./$script_name ['formula']"
 fi

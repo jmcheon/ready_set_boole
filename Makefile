@@ -1,5 +1,5 @@
 NAME := rsb
-SRCS := ReadySetBoole.cpp Tokenizer.cpp RPNtree.cpp main.cpp
+SRCS := ReadySetBoole.cpp Tokenizer.cpp RPNtree.cpp exercise.cpp main.cpp
 OBJS := $(SRCS:.cpp=.o)
 
 CC := c++

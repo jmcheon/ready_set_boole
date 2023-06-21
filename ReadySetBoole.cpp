@@ -447,21 +447,6 @@ t_powerset	RSB::powerset(t_set& set)
 	return powerset;
 };
 
-template <class T>
-std::ostream&	operator<<(std::ostream& cout, const std::vector<T>& vec){
-	cout << "{ ";
-
-	for (size_t i = 0; i < vec.size(); ++i)
-	{
-		if (i)
-			cout << ", ";
-		cout << vec[i];
-	}
-
-	cout << " }";
-	return cout;
-}
-
 t_set	RSB::eval_set(const std::string& formula, const t_powerset& sets)
 {
 	std::string			temp_formula;
@@ -569,3 +554,4 @@ t_set	RSB::eval_set(const std::string& formula, const t_powerset& sets)
 	}
 	return stack.top();
 };
+
