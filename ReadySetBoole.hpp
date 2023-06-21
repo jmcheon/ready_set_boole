@@ -21,6 +21,9 @@
 # define NUMBER_OF_EXERCISE 11
 //static const char* sExerciseStrings[] = {};
 
+typedef std::vector<int> t_set;
+typedef std::vector<std::vector<int> > t_powerset;
+
 class RSB
 {
 	public:
@@ -44,10 +47,10 @@ class RSB
 	// ex07 SAT
 	bool	sat(const std::string& formula);
 	// ex08 Powerset
-	std::vector<std::vector<int> >	powerset(std::vector<int>& set);
-	void	generate_powerset(const std::vector<int>& set, std::vector<int>& current_set, int index, std::vector<std::vector<int> >& powerset);
+	t_powerset	powerset(t_set& set);
+	void	generate_powerset(const t_set& set, t_set& current_set, int index, t_powerset& powerset);
 	// ex09 Set evaluation
-	std::vector<int>	eval_set(const std::string& formula, const std::vector<std::vector<int> >& sets);
+	t_set	eval_set(const std::string& formula, const t_powerset& sets);
 	// ex10 Curve
 	//f64	map(x: u16, y: u16);
 	// ex11 Inverse function

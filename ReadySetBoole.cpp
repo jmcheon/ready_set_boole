@@ -261,18 +261,18 @@ const std::string	RSB::negation_normal_form(const std::string& formula)
 	{
 		if (isalpha(c))
 			stack.push(std::string(1, c));
-		else if (c == '!' || c == '&' || c == '|' || c == '>' || c == '=')
+		else if (c == '!')
 		{
-			if (c == '!')
+			if (!stack.empty())
 			{
-				if (!stack.empty())
-				{
-					temp = stack.top(); stack.pop();
-					temp2 = apply_negation(temp);
-					stack.push(temp2);
-				}
+				temp = stack.top(); stack.pop();
+				temp2 = apply_negation(temp);
+				stack.push(temp2);
 			}
-        	else if (c == '&' || c == '|')
+		}
+		else if (c == '^' || c == '&' || c == '|' || c == '>' || c == '=')
+		{
+        	if (c == '&' || c == '|')
 			{
         	    temp = stack.top(); stack.pop();
         	    temp2 = stack.top(); stack.pop();
@@ -427,7 +427,7 @@ bool	RSB::sat(const std::string& formula)
 	return false;
 };
 
-void	RSB::generate_powerset(const std::vector<int>& set, std::vector<int>& current_set, int index, std::vector<std::vector<int> >& powerset)
+void	RSB::generate_powerset(const t_set& set, t_set& current_set, int index, t_powerset& powerset)
 {
 	powerset.push_back(current_set);
 	for (size_t i = index; i < set.size(); ++i)
@@ -438,10 +438,10 @@ void	RSB::generate_powerset(const std::vector<int>& set, std::vector<int>& curre
 	}
 };
 
-std::vector<std::vector<int> >	RSB::powerset(std::vector<int>& set)
+t_powerset	RSB::powerset(t_set& set)
 {
-	std::vector<std::vector<int> > powerset;
-	std::vector<int> current_set;
+	t_powerset	powerset;
+	t_set		current_set;
 
 	generate_powerset(set, current_set, 0, powerset);
 	return powerset;
@@ -462,15 +462,15 @@ std::ostream&	operator<<(std::ostream& cout, const std::vector<T>& vec){
 	return cout;
 }
 
-std::vector<int>	RSB::eval_set(const std::string& formula, const std::vector<std::vector<int> >& sets)
+t_set	RSB::eval_set(const std::string& formula, const t_powerset& sets)
 {
-	std::string						temp_formula;
-	std::stack<std::vector<int> >	stack;
-	std::vector<int>				universal_set;
-	std::vector<char>				variables;
-	size_t							variable_count = 0;
+	std::string			temp_formula;
+	std::stack<t_set>	stack;
+	t_set				universal_set;
+	std::vector<char>	variables;
+	size_t				variable_count = 0;
 
-	for (const std::vector<int>& set : sets)
+	for (const t_set& set : sets)
 	{
 		for (int element : set)
 		{
@@ -490,8 +490,8 @@ std::vector<int>	RSB::eval_set(const std::string& formula, const std::vector<std
 				if (variables[j] == c)
 				{
 					exist = true;
-					//std::cout << "sets[" << j << "]" << " - ";
-					//std::cout << c << ":" << sets[j] << std::endl;
+					//std::cout << "sets[" << j << "]" << " - "; 
+					//std::cout << c << ":" << sets[j] << std::endl; // debugging
 					stack.push(sets[j]);
 					break;
 				}
@@ -499,7 +499,7 @@ std::vector<int>	RSB::eval_set(const std::string& formula, const std::vector<std
 			if (!exist)
 			{
 				//std::cout << "sets[" << variable_count << "]" << " - ";
-				//std::cout << c << ":" << sets[variable_count] << std::endl;
+				//std::cout << c << ":" << sets[variable_count] << std::endl; // debugging
 				stack.push(sets[variable_count]);
 				variables.emplace_back(c);
 				variable_count++;
@@ -507,22 +507,22 @@ std::vector<int>	RSB::eval_set(const std::string& formula, const std::vector<std
 		}
 		else if (c == '!') // Negation
 		{
-            std::vector<int> operand = stack.top(); stack.pop();
-            std::vector<int> result;
+            t_set operand = stack.top(); stack.pop();
+            t_set result;
 
             for (int element : universal_set)
 			{
                 if (std::find(operand.begin(), operand.end(), element) == operand.end())
                     result.push_back(element);
             }
-			//std::cout << "\t mid neg result:" << result << std::endl;
+			//std::cout << "\t mid neg result:" << result << std::endl; // debugging
             stack.push(result);
 		}
 		else if (c == '&' || c == '|' || c == '^' || c == '=' || c == '>')
 		{
-			std::vector<int> operand2 = stack.top(); stack.pop();
-			std::vector<int> operand1 = stack.top(); stack.pop();
-			std::vector<int> result;
+			t_set operand2 = stack.top(); stack.pop();
+			t_set operand1 = stack.top(); stack.pop();
+			t_set result;
 			if (c == '&') // Intersection
 			{
 				std::unordered_map<int, bool> set1_elements;
@@ -563,7 +563,7 @@ std::vector<int>	RSB::eval_set(const std::string& formula, const std::vector<std
 						result.push_back(element);
 				}
 			}
-			//std::cout << "\t mid result:" << result << std::endl;
+			//std::cout << "\t mid result:" << result << std::endl; // debugging
 			stack.push(result);
 		}
 	}
