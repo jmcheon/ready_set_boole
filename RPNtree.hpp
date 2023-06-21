@@ -36,7 +36,7 @@ class UnaryOperatorNode : public RPNNode
 		UnaryOperatorNode(char op, std::unique_ptr<RPNNode> operand) : m_operator(op), m_operand(std::move(operand)) {}
 		char			get_operator() const { return m_operator; }
 		const RPNNode*	get_operand() const { return m_operand.get(); }
-		void			print() const override { std::cout << m_operator; m_operand->print(); }
+		void			print() const override { m_operand->print(); std::cout << m_operator; }
 		void			traverse() const override { std::cout << m_operator; }
 };
 
@@ -60,7 +60,7 @@ class BinaryOperatorNode: public RPNNode
 std::unique_ptr<RPNNode> build_tree(const std::string& formula);
 void	print_node(const RPNNode* node);
 void	print_tree(const RPNNode* node);
-void	print_tree(const std::string& prefix, const RPNNode* node, bool isLeft);
+void	print_tree(const std::string& prefix, const RPNNode* node, bool is_left);
 void	reverse_traversal(const RPNNode* node);
 
 #endif

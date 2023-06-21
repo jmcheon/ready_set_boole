@@ -38,7 +38,7 @@ class RSB
 	std::vector<std::vector<int> >	powerset(std::vector<int>& set);
 	void	generate_powerset(const std::vector<int>& set, std::vector<int>& current_set, int index, std::vector<std::vector<int> >& powerset);
 	// ex09 Set evaluation
-	//Vec<i32>	eval_set(formula: &str, sets: &[[i32]]);
+	std::vector<int>	eval_set(const std::string& formula, const std::vector<std::vector<int> >& sets);
 	// ex10 Curve
 	//f64	map(x: u16, y: u16);
 	// ex11 Inverse function

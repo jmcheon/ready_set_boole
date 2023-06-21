@@ -157,9 +157,8 @@ void	RSB::print_truth_table(const std::string& formula)
 	check_formula(formula);
 	// print column headers
 	std::cout << "| ";
-	for (size_t i = 0; i < formula.length(); ++i)
+	for (char c : formula)
 	{
-		char c = formula[i];
 		if (isalpha(c))
 		{
 			bool exist = false;
@@ -269,7 +268,7 @@ const std::string	RSB::negation_normal_form(const std::string& formula)
 			{
 				if (!stack.empty())
 				{
-					temp = stack.top();
+					temp = stack.top(); stack.pop();
 					temp2 = apply_negation(temp);
 					stack.push(temp2);
 				}
@@ -379,7 +378,6 @@ const std::string	RSB::conjunctive_normal_form(const std::string& formula)
 	return NULL;
 };
 
-
 bool	RSB::sat(const std::string& formula)
 {
 	size_t variable_count = 0;
@@ -388,9 +386,8 @@ bool	RSB::sat(const std::string& formula)
 	std::vector<std::pair<char, size_t> > variables;
 
 	check_formula(formula);
-	for (size_t i = 0; i < formula.length(); ++i)
+	for (char c : formula)
 	{
-		char c = formula[i];
 		if (isalpha(c))
 		{
 			bool exist = false;
@@ -450,3 +447,9 @@ std::vector<std::vector<int> >	RSB::powerset(std::vector<int>& set)
 	generate_powerset(set, current_set, 0, powerset);
 	return powerset;
 };
+/*
+std::vector<int>	RSB::eval_set(const std::string& formula, const std::vector<std::vector<int> >& sets)
+{
+
+};
+*/

@@ -67,17 +67,16 @@ void	print_tree(const RPNNode* node)
 
 void	reverse_traversal(const RPNNode* node)
 {
-    if (node == nullptr) {
-        return;
-	}
-
-	node->traverse();
-    if (const BinaryOperatorNode* binary_node = dynamic_cast<const BinaryOperatorNode*>(node))
-    {
-        reverse_traversal(binary_node->get_right());
-        reverse_traversal(binary_node->get_left());
-    }
-    else if (const UnaryOperatorNode* unary_node = dynamic_cast<const UnaryOperatorNode*>(node))
-        reverse_traversal(unary_node->get_operand());
+    if (node != nullptr)
+	{
+		node->traverse();
+    	if (const BinaryOperatorNode* binary_node = dynamic_cast<const BinaryOperatorNode*>(node))
+    	{
+    	    reverse_traversal(binary_node->get_right());
+    	    reverse_traversal(binary_node->get_left());
+    	}
+    	else if (const UnaryOperatorNode* unary_node = dynamic_cast<const UnaryOperatorNode*>(node))
+    	    reverse_traversal(unary_node->get_operand());
+		}
 }
 

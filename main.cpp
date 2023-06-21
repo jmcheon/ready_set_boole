@@ -156,14 +156,24 @@ void	ex08(int argc, char** argv)
 		set[i - 2] = std::atoi(argv[i]);
 	std::vector<std::vector<int> > powerset = rsb.powerset(set);
 	std::cout << set.size() << " - " << set << std::endl;
-	std::cout << powerset << std::endl;
+	std::cout << powerset.size() << " - " << powerset << std::endl;
 }
 
 void	ex09()
 {
-	std::cout << "Running ex09 - truth table..." << std::endl;
-	RSB rsb;
-	rsb.print_truth_table("AB&C|");
+	std::cout << "Running ex09 - set evaluation..." << std::endl;
+	//RSB rsb;
+
+/*
+	sets = { {0, 1, 2}, {0, 3, 4} };
+	std::cout << rsb.eval_set("AB&", &sets) << std::endl; // [0]
+
+	sets = { {0, 1, 2}, {3, 4, 5} };
+	std::cout << rsb.eval_set("AB|", &sets) << std::endl; // [0, 1, 2, 3, 4, 5]
+
+	sets = {{0, 1, 2}};
+	std::cout << rsb.eval_set("A!", &sets) << std::endl; // []
+*/
 }
 
 void	ex10()
