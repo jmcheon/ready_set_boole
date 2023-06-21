@@ -41,7 +41,7 @@ void	print_node(const RPNNode* node)
 	std::cout << std::endl;
 }
 
-void	print_tree(const std::string& prefix, const RPNNode* node, bool is_left)
+void	print_tree_leftview(const std::string& prefix, const RPNNode* node, bool is_left)
 {
     if( node != nullptr )
     {
@@ -51,18 +51,40 @@ void	print_tree(const std::string& prefix, const RPNNode* node, bool is_left)
 		node->traverse();
     	std::cout << std::endl;
     	if (const UnaryOperatorNode* unary_node = dynamic_cast<const UnaryOperatorNode*>(node))
-        	print_tree(prefix + (is_left ? "   " : "│  "), unary_node->get_operand(), true);
+        	print_tree_leftview(prefix + (is_left ? "   " : "│  "), unary_node->get_operand(), true);
     	if (const BinaryOperatorNode* binary_node = dynamic_cast<const BinaryOperatorNode*>(node))
 		{
-        	print_tree(prefix + (is_left ? "   " : "   "), binary_node->get_right(), false);
-        	print_tree(prefix + (is_left ? "   " : "   "), binary_node->get_left(), true);
+        	print_tree_leftview(prefix + (is_left ? "   " : "   "), binary_node->get_right(), false);
+        	print_tree_leftview(prefix + (is_left ? "   " : "   "), binary_node->get_left(), true);
     	}
     }
 }
 
-void	print_tree(const RPNNode* node)
+void	print_tree_rightview(const std::string& prefix, const RPNNode* node, bool is_left)
 {
-    print_tree("", node, true);
+    if( node != nullptr )
+    {
+        std::cout << prefix;
+        std::cout << (is_left ? "├─" : "└─" );
+
+		node->traverse();
+    	std::cout << std::endl;
+    	if (const UnaryOperatorNode* unary_node = dynamic_cast<const UnaryOperatorNode*>(node))
+        	print_tree_rightview(prefix + (is_left ? "│  " : "   "), unary_node->get_operand(), false);
+    	if (const BinaryOperatorNode* binary_node = dynamic_cast<const BinaryOperatorNode*>(node))
+		{
+        	print_tree_rightview(prefix + (is_left ? "│  " : "   "), binary_node->get_left(), true);
+        	print_tree_rightview(prefix + (is_left ? "│  " : "   "), binary_node->get_right(), false);
+    	}
+    }
+}
+
+void	print_tree(const RPNNode* node, bool leftview)
+{
+	if (leftview)
+    	print_tree_leftview("", node, true);
+	else
+    	print_tree_rightview("", node, false);
 }
 
 void	reverse_traversal(const RPNNode* node)

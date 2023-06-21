@@ -59,8 +59,9 @@ class BinaryOperatorNode: public RPNNode
 
 std::unique_ptr<RPNNode> build_tree(const std::string& formula);
 void	print_node(const RPNNode* node);
-void	print_tree(const RPNNode* node);
-void	print_tree(const std::string& prefix, const RPNNode* node, bool is_left);
+void	print_tree(const RPNNode* node, bool leftview=false);
+void	print_tree_rightview(const std::string& prefix, const RPNNode* node, bool is_left);
+void	print_tree_leftview(const std::string& prefix, const RPNNode* node, bool is_left);
 void	reverse_traversal(const RPNNode* node);
 
 #endif

@@ -161,19 +161,19 @@ void	ex08(int argc, char** argv)
 
 static std::vector<int>	parse_set(const char* str)
 {
-	std::vector<int> result;
+	t_set set;
 
 	//std::cout << *str << "|" << std::endl;
 	while(*str)
 	{
-		result.push_back(std::atoi(str));
+		set.push_back(std::atoi(str));
 		while (*str && *str != ',')
 			str++;
 		if (*str == ',')
 			str++;
 	}
-	//std::cout << result << std::endl;
-	return result;
+	//std::cout << set << std::endl;
+	return set;
 }
 
 bool	parse_formula(const std::string& formula)
@@ -201,7 +201,7 @@ bool	parse_formula(const std::string& formula)
 	return true;
 }
 
-bool	check_sets(const std::string& formula, const std::vector<std::vector<int> > sets, std::vector<char>& variables)
+static bool	check_sets(const std::string& formula, const t_powerset sets, std::vector<char>& variables)
 {
 	//std::vector<char> variables;
 	size_t variable_count = 0;
@@ -237,10 +237,10 @@ bool	check_sets(const std::string& formula, const std::vector<std::vector<int> >
 void	ex09(int argc, char** argv)
 {
 	std::cout << "\nRunning ex09 - set evaluation..." << std::endl;
-	const std::string formula = (std::string)argv[2];
-	std::vector<std::vector<int> > sets;
-	std::vector<char> variables;
-	RSB rsb;
+	const std::string	formula = (std::string)argv[2];
+	t_powerset			sets;
+	std::vector<char>	variables;
+	RSB					rsb;
 
 	for (int i = 3; i < argc; ++i)
 		sets.push_back(parse_set(argv[i]));	
