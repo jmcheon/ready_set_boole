@@ -21,7 +21,7 @@ class VariableNode : public RPNNode
 
 	public:
 		explicit		VariableNode(char variable) : m_variable(variable) {}
-		char			get_variable() const { return m_variable; }
+		char			getVariable() const { return m_variable; }
 		void			print() const override { std::cout << m_variable; }
 		void			traverse() const override { std::cout << m_variable; }
 };
@@ -34,8 +34,8 @@ class UnaryOperatorNode : public RPNNode
 
 	public:
 		UnaryOperatorNode(char op, std::unique_ptr<RPNNode> operand) : m_operator(op), m_operand(std::move(operand)) {}
-		char			get_operator() const { return m_operator; }
-		const RPNNode*	get_operand() const { return m_operand.get(); }
+		char			getOperator() const { return m_operator; }
+		const RPNNode*	getOperand() const { return m_operand.get(); }
 		void			print() const override { m_operand->print(); std::cout << m_operator; }
 		void			traverse() const override { std::cout << m_operator; }
 };
@@ -49,19 +49,19 @@ class BinaryOperatorNode: public RPNNode
 
 	public:
 		BinaryOperatorNode(char op, std::unique_ptr<RPNNode> left, std::unique_ptr<RPNNode> right) : m_operator(op), m_left(std::move(left)), m_right(std::move(right)) {}
-		char			get_operator() const { return m_operator; }
-		const RPNNode*	get_left() const { return m_left.get(); }
-		const RPNNode*	get_right() const { return m_right.get(); }
+		char			getOperator() const { return m_operator; }
+		const RPNNode*	getLeft() const { return m_left.get(); }
+		const RPNNode*	getRight() const { return m_right.get(); }
 		void			print() const override { m_left->print(); m_right->print(); std::cout << m_operator; }
 		void			traverse() const override { std::cout << m_operator; }
-		void			swap_child_nodes() { std::swap(m_left, m_right); }
+		void			swapChildNodes() { std::swap(m_left, m_right); }
 };
 
-std::unique_ptr<RPNNode> build_tree(const std::string& formula);
-void	print_node(const RPNNode* node);
-void	print_tree(const RPNNode* node, bool leftview=false);
-void	print_tree_rightview(const std::string& prefix, const RPNNode* node, bool is_left);
-void	print_tree_leftview(const std::string& prefix, const RPNNode* node, bool is_left);
-void	reverse_traversal(const RPNNode* node);
+std::unique_ptr<RPNNode> buildTree(const std::string& formula);
+void	printNode(const RPNNode* node);
+void	printTree(const RPNNode* node, bool leftview=false);
+void	printTreeRightview(const std::string& prefix, const RPNNode* node, bool is_left);
+void	printTreeLeftview(const std::string& prefix, const RPNNode* node, bool is_left);
+void	reverseTraversal(const RPNNode* node);
 
 #endif

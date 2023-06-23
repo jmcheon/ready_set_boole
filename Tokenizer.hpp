@@ -16,8 +16,8 @@ enum class TokenType
 class Token
 {
 	public:
-    	TokenType	type;
-    	char		value;
+    	TokenType	m_type;
+    	char		m_value;
 };
 
 class Tokenizer

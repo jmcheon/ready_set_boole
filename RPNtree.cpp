@@ -1,6 +1,6 @@
 #include "RPNtree.hpp"
 
-std::unique_ptr<RPNNode> build_tree(const std::string& formula)
+std::unique_ptr<RPNNode> buildTree(const std::string& formula)
 {
 	std::stack<std::unique_ptr<RPNNode> > stack;
 
@@ -34,14 +34,14 @@ std::unique_ptr<RPNNode> build_tree(const std::string& formula)
 	return std::move(stack.top());
 }
 
-void	print_node(const RPNNode* node)
+void	printNode(const RPNNode* node)
 {
 	if (node)
 		node->print();
 	std::cout << std::endl;
 }
 
-void	print_tree_leftview(const std::string& prefix, const RPNNode* node, bool is_left)
+void	printTreeLeftview(const std::string& prefix, const RPNNode* node, bool is_left)
 {
     if( node != nullptr )
     {
@@ -51,16 +51,16 @@ void	print_tree_leftview(const std::string& prefix, const RPNNode* node, bool is
 		node->traverse();
     	std::cout << std::endl;
     	if (const UnaryOperatorNode* unary_node = dynamic_cast<const UnaryOperatorNode*>(node))
-        	print_tree_leftview(prefix + (is_left ? "   " : "│  "), unary_node->get_operand(), true);
+        	printTreeLeftview(prefix + (is_left ? "   " : "│  "), unary_node->getOperand(), true);
     	if (const BinaryOperatorNode* binary_node = dynamic_cast<const BinaryOperatorNode*>(node))
 		{
-        	print_tree_leftview(prefix + (is_left ? "   " : "   "), binary_node->get_right(), false);
-        	print_tree_leftview(prefix + (is_left ? "   " : "   "), binary_node->get_left(), true);
+        	printTreeLeftview(prefix + (is_left ? "   " : "   "), binary_node->getRight(), false);
+        	printTreeLeftview(prefix + (is_left ? "   " : "   "), binary_node->getLeft(), true);
     	}
     }
 }
 
-void	print_tree_rightview(const std::string& prefix, const RPNNode* node, bool is_left)
+void	printTreeRightview(const std::string& prefix, const RPNNode* node, bool is_left)
 {
     if( node != nullptr )
     {
@@ -70,35 +70,35 @@ void	print_tree_rightview(const std::string& prefix, const RPNNode* node, bool i
 		node->traverse();
     	std::cout << std::endl;
     	if (const UnaryOperatorNode* unary_node = dynamic_cast<const UnaryOperatorNode*>(node))
-        	print_tree_rightview(prefix + (is_left ? "│  " : "   "), unary_node->get_operand(), false);
+        	printTreeRightview(prefix + (is_left ? "│  " : "   "), unary_node->getOperand(), false);
     	if (const BinaryOperatorNode* binary_node = dynamic_cast<const BinaryOperatorNode*>(node))
 		{
-        	print_tree_rightview(prefix + (is_left ? "│  " : "   "), binary_node->get_left(), true);
-        	print_tree_rightview(prefix + (is_left ? "│  " : "   "), binary_node->get_right(), false);
+        	printTreeRightview(prefix + (is_left ? "│  " : "   "), binary_node->getLeft(), true);
+        	printTreeRightview(prefix + (is_left ? "│  " : "   "), binary_node->getRight(), false);
     	}
     }
 }
 
-void	print_tree(const RPNNode* node, bool leftview)
+void	printTree(const RPNNode* node, bool leftview)
 {
 	if (leftview)
-    	print_tree_leftview("", node, true);
+    	printTreeLeftview("", node, true);
 	else
-    	print_tree_rightview("", node, false);
+    	printTreeRightview("", node, false);
 }
 
-void	reverse_traversal(const RPNNode* node)
+void	reverseTraversal(const RPNNode* node)
 {
     if (node != nullptr)
 	{
 		node->traverse();
     	if (const BinaryOperatorNode* binary_node = dynamic_cast<const BinaryOperatorNode*>(node))
     	{
-    	    reverse_traversal(binary_node->get_right());
-    	    reverse_traversal(binary_node->get_left());
+    	    reverseTraversal(binary_node->getRight());
+    	    reverseTraversal(binary_node->getLeft());
     	}
     	else if (const UnaryOperatorNode* unary_node = dynamic_cast<const UnaryOperatorNode*>(node))
-    	    reverse_traversal(unary_node->get_operand());
+    	    reverseTraversal(unary_node->getOperand());
 		}
 }
 

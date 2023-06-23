@@ -28,23 +28,23 @@ unsigned int RSB::multiplier(unsigned int a, unsigned int b)
 	return (result);
 };
 
-unsigned int RSB::gray_code(unsigned int n)
+unsigned int RSB::grayCode(unsigned int n)
 {
 	// perform XOR operation between n and n shifted right by 1 bit
 	return (n ^ (n >> 1));
 };
 
-bool	RSB::eval_formula(const std::string& formula)
+bool	RSB::evalFormula(const std::string& formula)
 {
 	std::stack<bool>	eval_stack;
 	
-	check_formula(formula);
+	checkFormula(formula);
 	for (char c: formula)
 	{
 		if (std::isdigit(c))
 		{
-			bool value = c == '1';
-			eval_stack.push(value);
+			bool m_value = c == '1';
+			eval_stack.push(m_value);
 		}
 		else if (c == '!')
 		{
@@ -59,7 +59,7 @@ bool	RSB::eval_formula(const std::string& formula)
 			bool operand1 = eval_stack.top();
 			eval_stack.pop();
 
-			bool result = eval_operator(c, operand1, operand2);
+			bool result = evalOperator(c, operand1, operand2);
 			eval_stack.push(result);
 		}
 		else
@@ -68,7 +68,7 @@ bool	RSB::eval_formula(const std::string& formula)
 	return eval_stack.top();
 };
 
-bool	RSB::eval_operator(char op, bool operand1, bool operand2)
+bool	RSB::evalOperator(char op, bool operand1, bool operand2)
 {
 	switch (op)
 	{
@@ -89,24 +89,23 @@ bool	RSB::eval_operator(char op, bool operand1, bool operand2)
 	}
 };
 
-void	RSB::check_formula(const std::string& formula)
+void	RSB::checkFormula(const std::string& formula)
 {
 	Tokenizer			tokenizer;
     std::vector<Token>	tokens = tokenizer.tokenize(formula);
     std::stack<char>	stack;
     char				op1, op2;
 
-	//print_tokens(tokens);
     //std::cout << "\n\t Formula syntax checking...\n";
     for (const Token& token : tokens)
 	{
-        switch (token.type)
+        switch (token.m_type)
 		{
             case TokenType::VARIABLE:
 				stack.push('1');
                 break;
             case TokenType::BOOLEAN:
-				stack.push(token.value);
+				stack.push(token.m_value);
                 break;
             case TokenType::NEGATION:
 	    		if (stack.size() >= 1)
@@ -118,7 +117,7 @@ void	RSB::check_formula(const std::string& formula)
 				else
 				{
 					std::stringstream error_message;
-					error_message << "Invalid syntax '" << token.value << "'";
+					error_message << "Invalid syntax '" << token.m_value << "'";
 					throw std::runtime_error(error_message.str());
 				}
 				break;
@@ -129,13 +128,13 @@ void	RSB::check_formula(const std::string& formula)
 					stack.pop();
 			    	op2 = stack.top();
 					stack.pop();
-					bool result = eval_operator(token.value, op1, op2);
+					bool result = evalOperator(token.m_value, op1, op2);
 					stack.push(result);
 				}
 				else
 				{
 					std::stringstream error_message;
-					error_message << "Invalid syntax '" << token.value << "'";
+					error_message << "Invalid syntax '" << token.m_value << "'";
 					throw std::runtime_error(error_message.str());
 				}
 				break;
@@ -145,15 +144,14 @@ void	RSB::check_formula(const std::string& formula)
 		throw std::runtime_error("Invalid formula");
 }
 
-void	RSB::print_truth_table(const std::string& formula)
+void	RSB::printTruthTable(const std::string& formula)
 {
 	size_t variable_count = 0;
 	size_t rows = 0;
 	std::string temp_formula = formula;
-	// store all variable indice to replace them with boolen value for eval_formula()
 	std::vector<std::pair<char, size_t> > variables;
 
-	check_formula(formula);
+	checkFormula(formula);
 	// print column headers
 	std::cout << "| ";
 	for (char c : formula)
@@ -188,11 +186,6 @@ void	RSB::print_truth_table(const std::string& formula)
 		std::cout << "|---";
 	std::cout << "|\n";
 	rows = 1 << variable_count;
-	/*
-	* to display all variable indice
-	for (auto it = variable_indice.begin(); it != variable_indice.end(); ++it)
-		std::cout << *it << std::endl;
-	*/
 
 	for (size_t i = 0; i < rows; ++i)
 	{
@@ -200,15 +193,15 @@ void	RSB::print_truth_table(const std::string& formula)
 		temp_formula = formula;
 		for (const auto& variable : variables)
 		{
-			size_t value = (i >> (variable.second - 1)) & 1;
-			std::cout << value << " | ";
-			std::replace(temp_formula.begin(), temp_formula.end(), variable.first, (char)(value + '0'));
+			size_t m_value = (i >> (variable.second - 1)) & 1;
+			std::cout << m_value << " | ";
+			std::replace(temp_formula.begin(), temp_formula.end(), variable.first, (char)(m_value + '0'));
 		}
-		std::cout << eval_formula(temp_formula) << " |\n";
+		std::cout << evalFormula(temp_formula) << " |\n";
 	}
 };
 
-static std::string	apply_negation(std::string& formula)
+static std::string	applyNegation(std::string& formula)
 {
 	std::stack<std::string> stack;
 	std::string				temp;
@@ -251,12 +244,12 @@ static std::string	apply_negation(std::string& formula)
 	return stack.top();
 };
 
-const std::string	RSB::negation_normal_form(const std::string& formula)
+const std::string	RSB::negationNormalForm(const std::string& formula)
 {
 	std::stack<std::string> stack;
 	std::string temp, temp2;
 
-	check_formula(formula);
+	checkFormula(formula);
 	for (char c : formula)
 	{
 		if (isalpha(c))
@@ -266,7 +259,7 @@ const std::string	RSB::negation_normal_form(const std::string& formula)
 			if (!stack.empty())
 			{
 				temp = stack.top(); stack.pop();
-				temp2 = apply_negation(temp);
+				temp2 = applyNegation(temp);
 				stack.push(temp2);
 			}
 		}
@@ -302,7 +295,7 @@ const std::string	RSB::negation_normal_form(const std::string& formula)
 	return stack.top();
 };
 
-const std::string	RSB::negation_normal_form(const RPNNode* node, bool negate)
+const std::string	RSB::negationNormalForm(const RPNNode* node, bool negate)
 {
 	std::string converted = "";
 
@@ -311,69 +304,69 @@ const std::string	RSB::negation_normal_form(const RPNNode* node, bool negate)
 	if (const VariableNode* variable_node = dynamic_cast<const VariableNode*>(node))
 	{
 		std::cout << std::endl;
-		std::cout << variable_node->get_variable() << std::endl;
-		converted += variable_node->get_variable();
+		std::cout << variable_node->getVariable() << std::endl;
+		converted += variable_node->getVariable();
 		if (negate)
 			converted += '!';
 	}
 	else if (const UnaryOperatorNode* unary_node = dynamic_cast<const UnaryOperatorNode*>(node))
 	{
-		const RPNNode* operand = unary_node->get_operand();
+		const RPNNode* operand = unary_node->getOperand();
         if (const VariableNode* operandVariableNode = dynamic_cast<const VariableNode*>(operand))
 		{
-            converted += operandVariableNode->get_variable();
-            converted += unary_node->get_operator();
+            converted += operandVariableNode->getVariable();
+            converted += unary_node->getOperator();
 		}
         else if (const BinaryOperatorNode* operandBinaryNode = dynamic_cast<const BinaryOperatorNode*>(operand))
 		{
 			std::cout << std::endl;
-			std::cout << operandBinaryNode->get_operator() << std::endl;
-            converted += negation_normal_form(operandBinaryNode, true);
-            converted += unary_node->get_operator();
+			std::cout << operandBinaryNode->getOperator() << std::endl;
+            converted += negationNormalForm(operandBinaryNode, true);
+            converted += unary_node->getOperator();
 		}
         else if (const UnaryOperatorNode* operandUnaryNode = dynamic_cast<const UnaryOperatorNode*>(operand))
 		{
-        	converted += negation_normal_form(operandUnaryNode, true);
-            converted += unary_node->get_operator();
+        	converted += negationNormalForm(operandUnaryNode, true);
+            converted += unary_node->getOperator();
 		}
 		//std::cout << std::endl;
-		//std::cout << unary_node->get_operand() << std::endl;
-		//temp_node = unary_node->get_operand()
-		//if (const VariableNode* operand_node = dynamic_cast<const VariableNode*>(unary_node->get_operand()))
+		//std::cout << unary_node->getOperand() << std::endl;
+		//temp_node = unary_node->getOperand()
+		//if (const VariableNode* operand_node = dynamic_cast<const VariableNode*>(unary_node->getOperand()))
 		//{
-        //    converted += operand_node->get_variable();
+        //    converted += operand_node->getVariable();
 		//	std::cout << std::endl;
-		//	std::cout << operand_node->get_variable() << std::endl;
+		//	std::cout << operand_node->getVariable() << std::endl;
 		//}
         //else
-        //    converted += negation_normal_form(unary_node->get_operand());
+        //    converted += negationNormalForm(unary_node->getOperand());
 		//std::cout << std::endl;
-		//std::cout << unary_node->get_operator() << std::endl;
-		converted += unary_node->get_operator();
-		//converted += negation_normal_form(unary_node->get_operand());
+		//std::cout << unary_node->getOperator() << std::endl;
+		converted += unary_node->getOperator();
+		//converted += negationNormalForm(unary_node->getOperand());
 	}
 	else if (const BinaryOperatorNode* binary_node = dynamic_cast<const BinaryOperatorNode*>(node))
 	{
 		//std::cout << std::endl;
-		//std::cout << binary_node->get_left() << std::endl;
-		std::string left = negation_normal_form(binary_node->get_left());
+		//std::cout << binary_node->getLeft() << std::endl;
+		std::string left = negationNormalForm(binary_node->getLeft());
 		std::cout << "left:" << left << std::endl;
-		std::string right = negation_normal_form(binary_node->get_right());
+		std::string right = negationNormalForm(binary_node->getRight());
 		if (negate) {
             converted += left + '!';
         } else {
             converted += left;
         }
-		converted += binary_node->get_operator();
+		converted += binary_node->getOperator();
         converted += right;
 	}
 	return converted;
 };
 
-const std::string	RSB::conjunctive_normal_form(const std::string& formula)
+const std::string	RSB::conjunctiveNormalForm(const std::string& formula)
 {
-	check_formula(formula);
-	std::string temp_formula = negation_normal_form(formula);
+	checkFormula(formula);
+	std::string temp_formula = negationNormalForm(formula);
 	return NULL;
 };
 
@@ -384,7 +377,7 @@ bool	RSB::sat(const std::string& formula)
 	std::string temp_formula = formula;
 	std::vector<std::pair<char, size_t> > variables;
 
-	check_formula(formula);
+	checkFormula(formula);
 	for (char c : formula)
 	{
 		if (isalpha(c))
@@ -418,22 +411,22 @@ bool	RSB::sat(const std::string& formula)
 		temp_formula = formula;
 		for (const auto& variable : variables)
 		{
-			size_t value = (i >> (variable.second - 1)) & 1;
-			std::replace(temp_formula.begin(), temp_formula.end(), variable.first, (char)(value + '0'));
+			size_t m_value = (i >> (variable.second - 1)) & 1;
+			std::replace(temp_formula.begin(), temp_formula.end(), variable.first, (char)(m_value + '0'));
 		}
-		if (eval_formula(temp_formula))
+		if (evalFormula(temp_formula))
 			return true;
 	}
 	return false;
 };
 
-void	RSB::generate_powerset(const t_set& set, t_set& current_set, int index, t_powerset& powerset)
+void	RSB::generatePowerset(const t_set& set, t_set& current_set, int index, t_powerset& powerset)
 {
 	powerset.push_back(current_set);
 	for (size_t i = index; i < set.size(); ++i)
 	{
 		current_set.push_back(set[i]);
-		generate_powerset(set, current_set, i + 1, powerset);
+		generatePowerset(set, current_set, i + 1, powerset);
 		current_set.pop_back();
 	}
 };
@@ -443,11 +436,11 @@ t_powerset	RSB::powerset(t_set& set)
 	t_powerset	powerset;
 	t_set		current_set;
 
-	generate_powerset(set, current_set, 0, powerset);
+	generatePowerset(set, current_set, 0, powerset);
 	return powerset;
 };
 
-t_set	RSB::eval_set(const std::string& formula, const t_powerset& sets)
+t_set	RSB::evalSet(const std::string& formula, const t_powerset& sets)
 {
 	std::string			temp_formula;
 	std::stack<t_set>	stack;
@@ -464,7 +457,7 @@ t_set	RSB::eval_set(const std::string& formula, const t_powerset& sets)
 		}
 	}
 
-	temp_formula = negation_normal_form(formula);
+	temp_formula = negationNormalForm(formula);
 	for (char c : temp_formula)
 	{
 		if (isalpha(c))
@@ -554,4 +547,3 @@ t_set	RSB::eval_set(const std::string& formula, const t_powerset& sets)
 	}
 	return stack.top();
 };
-

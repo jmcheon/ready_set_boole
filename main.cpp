@@ -2,7 +2,7 @@
 #include "RPNtree.hpp"
 #include "exercise.hpp"
 
-void	execute_exercise(int argc, char** argv)
+void	executeExercises(int argc, char** argv)
 {
 	void (*func_ptr[12])(int, char**);
 	std::string exercise;
@@ -38,7 +38,7 @@ int	main(int argc, char** argv)
 	}
 	try
 	{
-		execute_exercise(argc, argv);
+		executeExercises(argc, argv);
 	}
 	catch (const std::exception& e)
 	{

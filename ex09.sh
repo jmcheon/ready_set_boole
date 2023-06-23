@@ -17,7 +17,7 @@ if [ $# -eq 0 ]; then
 	&& "$program" "$exercise" "OP=" "0,1,2" "3,4,5" \
 	&& "$program" "$exercise" "AB|B&" "0,1" "1,2" \
 	&& "$program" "$exercise" "AB|C&" "0,1,3" "3,4,5" "0,2,4" \
-	&& "$program" "$exercise" "AB|C&D|" "0,1,3" "3,4,5" "0,2,4" \
+	&& "$program" "$exercise" "AB|B&" "0,1,3" "0,2,4" \
 	;
 else
 	#echo "Arguments provided: $@"
