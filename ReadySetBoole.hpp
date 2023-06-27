@@ -32,26 +32,26 @@ typedef struct s_vec2s
 class RSB
 {
 	public:
-	// ex00 Adder
+	// ex00 Adder O(1) / O(1)
 	unsigned int adder(unsigned int a, unsigned int b);
-	// ex01 Multiplier
+	// ex01 Multiplier O(1) / O(1)
 	unsigned int multiplier(unsigned int a, unsigned int b);
 	// ex02 Gray code
 	unsigned int grayCode(unsigned int n);
-	// ex03 Boolean evaluation
+	// ex03 Boolean evaluation O(n) / NA
 	bool	evalFormula(const std::string& formula);
 	bool	evalOperator(char op, bool operand1, bool operand2);
 	void	checkFormula(const std::string& formula);
-	// ex04 Truth table
+	// ex04 Truth table  O(2^n) / NA
 	void	printTruthTable(const std::string& formula);
 	// ex05 Negation Normal Form
 	const std::string	negationNormalForm(const std::string& formula);
 	const std::string	negationNormalForm(const RPNNode* node, bool negate=false);
 	// ex06 Conjunctive Normal Form
 	const std::string	conjunctiveNormalForm(const std::string& formula);
-	// ex07 SAT
+	// ex07 SAT  O(2^n) / NA
 	bool	sat(const std::string& formula);
-	// ex08 Powerset
+	// ex08 Powerset  NA / O(2^n)
 	t_powerset	powerset(t_set& set);
 	void	generatePowerset(const t_set& set, t_set& current_set, int index, t_powerset& powerset);
 	// ex09 Set evaluation
