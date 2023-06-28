@@ -5,6 +5,7 @@
 #include <algorithm>
 #include <unordered_map>
 #include <functional>
+#include <unordered_set>
 #include <vector>
 #include "Tokenizer.hpp"
 #include "RPNtree.hpp"
@@ -45,6 +46,8 @@ class RSB
 	// ex04 Truth table  O(2^n) / NA
 	void	printTruthTable(const std::string& formula);
 	// ex05 Negation Normal Form
+	std::string	negationNormalForm2(const std::string& formula);
+	const std::string	simplifyForm(const std::string& formula);
 	const std::string	negationNormalForm(const std::string& formula);
 	const std::string	negationNormalForm(const RPNNode* node, bool negate=false);
 	// ex06 Conjunctive Normal Form

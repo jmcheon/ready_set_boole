@@ -244,7 +244,7 @@ static std::string	applyNegation(std::string& formula)
 	return stack.top();
 };
 
-const std::string	RSB::negationNormalForm(const std::string& formula)
+const std::string	RSB::simplifyForm(const std::string& formula)
 {
 	std::stack<std::string> stack;
 	std::string temp, temp2;
@@ -254,22 +254,13 @@ const std::string	RSB::negationNormalForm(const std::string& formula)
 	{
 		if (isalpha(c))
 			stack.push(std::string(1, c));
-		else if (c == '!')
+		else if (c == '^' || c == '>' || c == '=')
 		{
-			if (!stack.empty())
-			{
-				temp = stack.top(); stack.pop();
-				temp2 = applyNegation(temp);
-				stack.push(temp2);
-			}
-		}
-		else if (c == '^' || c == '&' || c == '|' || c == '>' || c == '=')
-		{
-        	if (c == '&' || c == '|')
+        	if (c == '^')
 			{
         	    temp = stack.top(); stack.pop();
         	    temp2 = stack.top(); stack.pop();
-        	    stack.push(temp2 + temp + c);
+        	    stack.push(temp2 + temp + "!&" + temp2 + "!" + temp + "&|");
         	}
         	else if (c == '>')
 			{
@@ -285,6 +276,47 @@ const std::string	RSB::negationNormalForm(const std::string& formula)
         	    stack.push(nnf);
 			}
 		}
+		else if (c == '|' || c == '&')
+		{
+        	temp = stack.top(); stack.pop();
+        	temp2 = stack.top(); stack.pop();
+			stack.push(temp2 + temp + c);
+		}
+		else if (c == '!')
+		{
+        	temp = stack.top(); stack.pop();
+			stack.push(temp + "!");
+		}
+	}
+	return stack.top();
+};
+
+const std::string	RSB::negationNormalForm(const std::string& formula)
+{
+	std::stack<std::string> stack;
+	std::string temp, temp2, temp_formula;
+
+	checkFormula(formula);
+	temp_formula = simplifyForm(formula);
+	for (char c : temp_formula)
+	{
+		if (isalpha(c))
+			stack.push(std::string(1, c));
+		else if (c == '!')
+		{
+			if (!stack.empty())
+			{
+				temp = stack.top(); stack.pop();
+				temp2 = applyNegation(temp);
+				stack.push(temp2);
+			}
+		}
+        else if (c == '&' || c == '|')
+		{
+        	temp = stack.top(); stack.pop();
+        	temp2 = stack.top(); stack.pop();
+        	stack.push(temp2 + temp + c);
+		}
 		else
 		{
 			std::stringstream error_message;
@@ -294,6 +326,12 @@ const std::string	RSB::negationNormalForm(const std::string& formula)
 	}
 	return stack.top();
 };
+
+bool isOperator(char c)
+{
+    static std::unordered_set<char> operators = {'&', '|', '!'};
+    return operators.count(c) > 0;
+}
 
 const std::string	RSB::negationNormalForm(const RPNNode* node, bool negate)
 {
