@@ -125,14 +125,6 @@ void	ex05(int argc, char** argv)
 	}
 }
 
-void	ex05(const RPNNode* node)
-{
-	std::cout << "Running ex05 - negation normal form..." << std::endl;
-	RSB rsb;
-	if (node != nullptr)
-		std::cout << GREEN << rsb.negationNormalForm(node) << FIN << std::endl;
-}
-
 void	ex06(int argc, char** argv)
 {
 	std::cout << "Running ex06 - conjunctive normal form..." << std::endl;

@@ -41,12 +41,9 @@ class RSB
 	unsigned int grayCode(unsigned int n);
 	// ex03 Boolean evaluation O(n) / NA
 	bool	evalFormula(const std::string& formula);
-	bool	evalOperator(char op, bool operand1, bool operand2);
-	void	checkFormula(const std::string& formula);
 	// ex04 Truth table  O(2^n) / NA
 	void	printTruthTable(const std::string& formula);
 	// ex05 Negation Normal Form
-	const std::string	simplifyForm(const std::string& formula);
 	const std::string	negationNormalForm(const std::string& formula);
 	// ex06 Conjunctive Normal Form
 	const std::string	conjunctiveNormalForm(const std::string& formula);
@@ -54,7 +51,6 @@ class RSB
 	bool	sat(const std::string& formula);
 	// ex08 Powerset  NA / O(2^n)
 	t_powerset	powerset(t_set& set);
-	void	generatePowerset(const t_set& set, t_set& current_set, int index, t_powerset& powerset);
 	// ex09 Set evaluation
 	t_set	evalSet(const std::string& formula, const t_powerset& sets);
 	// ex10 Curve

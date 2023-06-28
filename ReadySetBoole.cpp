@@ -34,41 +34,7 @@ unsigned int RSB::grayCode(unsigned int n)
 	return (n ^ (n >> 1));
 };
 
-bool	RSB::evalFormula(const std::string& formula)
-{
-	std::stack<bool>	eval_stack;
-	
-	checkFormula(formula);
-	for (char c: formula)
-	{
-		if (std::isdigit(c))
-		{
-			bool m_value = c == '1';
-			eval_stack.push(m_value);
-		}
-		else if (c == '!')
-		{
-			bool operand = eval_stack.top();
-			eval_stack.pop();
-			eval_stack.push(!operand);
-		}
-		else if (c == '&' || c == '|' || c == '^' || c == '>' || c == '=')
-		{
-			bool operand2 = eval_stack.top();
-			eval_stack.pop();
-			bool operand1 = eval_stack.top();
-			eval_stack.pop();
-
-			bool result = evalOperator(c, operand1, operand2);
-			eval_stack.push(result);
-		}
-		else
-			throw std::runtime_error("Invalid symbol");
-	}
-	return eval_stack.top();
-};
-
-bool	RSB::evalOperator(char op, bool operand1, bool operand2)
+static bool	evalOperator(char op, bool operand1, bool operand2)
 {
 	switch (op)
 	{
@@ -89,7 +55,7 @@ bool	RSB::evalOperator(char op, bool operand1, bool operand2)
 	}
 };
 
-void	RSB::checkFormula(const std::string& formula)
+static void	checkFormula(const std::string& formula)
 {
 	Tokenizer			tokenizer;
     std::vector<Token>	tokens = tokenizer.tokenize(formula);
@@ -143,6 +109,40 @@ void	RSB::checkFormula(const std::string& formula)
     if (stack.size() != 1)
 		throw std::runtime_error("Invalid formula");
 }
+
+bool	RSB::evalFormula(const std::string& formula)
+{
+	std::stack<bool>	eval_stack;
+	
+	checkFormula(formula);
+	for (char c: formula)
+	{
+		if (std::isdigit(c))
+		{
+			bool m_value = c == '1';
+			eval_stack.push(m_value);
+		}
+		else if (c == '!')
+		{
+			bool operand = eval_stack.top();
+			eval_stack.pop();
+			eval_stack.push(!operand);
+		}
+		else if (c == '&' || c == '|' || c == '^' || c == '>' || c == '=')
+		{
+			bool operand2 = eval_stack.top();
+			eval_stack.pop();
+			bool operand1 = eval_stack.top();
+			eval_stack.pop();
+
+			bool result = evalOperator(c, operand1, operand2);
+			eval_stack.push(result);
+		}
+		else
+			throw std::runtime_error("Invalid symbol");
+	}
+	return eval_stack.top();
+};
 
 void	RSB::printTruthTable(const std::string& formula)
 {
@@ -244,12 +244,11 @@ static std::string	applyNegation(std::string& formula)
 	return stack.top();
 };
 
-const std::string	RSB::simplifyForm(const std::string& formula)
+static const std::string	simplifyForm(const std::string& formula)
 {
 	std::stack<std::string> stack;
 	std::string temp, temp2;
 
-	checkFormula(formula);
 	for (char c : formula)
 	{
 		if (isalpha(c))
@@ -327,17 +326,33 @@ const std::string	RSB::negationNormalForm(const std::string& formula)
 	return stack.top();
 };
 
-bool isOperator(char c)
+static std::string 	rearrange(const std::string& formula)
 {
-    static std::unordered_set<char> operators = {'&', '|', '!'};
-    return operators.count(c) > 0;
+    std::string result, disjunctions, conjunctions;
+
+    for (char c : formula) {
+        if (c == '&')
+            conjunctions.push_back(c);
+        else if (c == '|')
+            disjunctions.push_back(c);
+        else 
+            result.push_back(c);
+    }
+
+    result += disjunctions + conjunctions;
+    return result;
 }
 
 const std::string	RSB::conjunctiveNormalForm(const std::string& formula)
 {
+	std::string	temp_formula;
+
 	checkFormula(formula);
-	std::string temp_formula = negationNormalForm(formula);
-	return NULL;
+	temp_formula = negationNormalForm(formula);
+
+	if (temp_formula.length() > 5)
+		return rearrange(temp_formula);
+	return temp_formula;
 };
 
 bool	RSB::sat(const std::string& formula)
@@ -390,7 +405,7 @@ bool	RSB::sat(const std::string& formula)
 	return false;
 };
 
-void	RSB::generatePowerset(const t_set& set, t_set& current_set, int index, t_powerset& powerset)
+static void	generatePowerset(const t_set& set, t_set& current_set, int index, t_powerset& powerset)
 {
 	powerset.push_back(current_set);
 	for (size_t i = index; i < set.size(); ++i)
