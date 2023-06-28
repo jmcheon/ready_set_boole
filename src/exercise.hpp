@@ -1,6 +1,17 @@
 #ifndef EXERCISE_HPP
 #define EXERCISE_HPP
 
+# define YELLOW "\033[0;38;5;220m"
+# define GREEN "\033[0;38;5;42m"
+# define RED "\033[0;38;5;196m"
+# define BLUE "\033[0;38;5;21m"
+# define PINK "\033[0;38;5;205m"
+# define PURPLE "\033[0;38;5;93m"
+# define ORANGE "\033[38;5;202m"
+# define FIN "\033[0m"
+
+# define MAX_EXERCISE_NUM 11
+
 void	ex00(int argc, char** argv);
 void	ex01(int argc, char** argv);
 void	ex02(int argc, char** argv);

@@ -13,7 +13,8 @@ static bool	parseFormula(const std::string& formula)
 
         printTree(rpn.get(), true);
 		std::cout << std::endl;
-    } catch (const std::runtime_error& e)
+    }
+	catch (const std::runtime_error& e)
 	{
         std::cerr << "Error: " << e.what() << std::endl;
 		return false;
