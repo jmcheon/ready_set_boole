@@ -13,7 +13,6 @@ std::string	postorder(std::unique_ptr<Node>& root)
 	return output;
 }
 
-
 std::string	inorder(std::unique_ptr<Node>& root)
 {
 	std::string output;
@@ -31,101 +30,58 @@ std::string	inorder(std::unique_ptr<Node>& root)
 	return output;
 }
 
+std::unique_ptr<Node> distribute(std::unique_ptr<Node>& a, std::unique_ptr<Node>& b, std::unique_ptr<Node>& c)
+{
+    auto new_root = std::make_unique<Node>('&');
+    new_root->m_left = std::make_unique<Node>('|', a->clone(), std::move(b));
+    new_root->m_right = std::make_unique<Node>('|', std::move(a), std::move(c));
+    return new_root;
+}
+
+bool isDistributable(const std::unique_ptr<Node>& root)
+{
+    if (!root)
+        return false;
+    return (root->m_data == '|' && ((root->m_left && root->m_left->m_data == '&') || (root->m_right && root->m_right->m_data == '&'))) ||
+           (root->m_data == '&' && ((root->m_left && root->m_left->m_data == '|') || (root->m_right && root->m_right->m_data == '|')));
+}
+
 std::unique_ptr<Node> applyDistributiveLaw(std::unique_ptr<Node>& root)
 {
     if (!root)
         return nullptr;
 
-    // root->m_left = applyDistributiveLaw(root->m_left);
-    // root->m_right = applyDistributiveLaw(root->m_right);
+    root->m_left = applyDistributiveLaw(root->m_left);
+    root->m_right = applyDistributiveLaw(root->m_right);
 
-    while (root->m_data == '|' && ((root->m_left && root->m_left->m_data == '&') ||
-                                    (root->m_right && root->m_right->m_data == '&')))
-    {
+    if (isDistributable(root)) {
         std::unique_ptr<Node> a, b, c;
 
         if (root->m_left && root->m_left->m_data == '&') {
-            a = std::move(root->m_right);
-            b = std::move(root->m_left->m_left);
-            c = std::move(root->m_left->m_right);
-        } else {
-            a = std::move(root->m_left);
-            b = std::move(root->m_right->m_left);
-            c = std::move(root->m_right->m_right);
+			    a = std::move(root->m_right);
+			    b = std::move(root->m_left->m_left);
+			    c = std::move(root->m_left->m_right);
+        } else if (root->m_right && root->m_right->m_data == '&') {
+			    a = std::move(root->m_right);
+			    b = std::move(root->m_left->m_left);
+			    c = std::move(root->m_left->m_right);
+        } else if (root->m_left && root->m_left->m_data == '|') {
+			    a = std::move(root->m_right);
+			    b = std::move(root->m_left->m_left);
+			    c = std::move(root->m_left->m_right);
+        } else { // (root->m_right && root->m_right->m_data == '|')
+			    a = std::move(root->m_left);
+			    b = std::move(root->m_right->m_left);
+			    c = std::move(root->m_right->m_right);
         }
-		if (a.get()->m_right)
-			std::cout << a.get()->m_right->m_data << std::endl;
-		if (a.get()->m_left)
-			std::cout << a.get()->m_data << a.get()->m_left->m_data << std::endl;
-		if (b.get()->m_right)
-			std::cout << b.get()->m_right->m_data << std::endl;
-		if (b.get()->m_left)
-			std::cout << b.get()->m_data << b.get()->m_left->m_data << std::endl;
-		if (c.get()->m_right)
-			std::cout << c.get()->m_right->m_data << std::endl;
-		if (c.get()->m_left)
-			std::cout << c.get()->m_data << c.get()->m_left->m_data << std::endl;
 
-        root->m_data = '&';
-        root->m_left = std::make_unique<Node>('|', std::move(b), std::move(a->clone()));
-        root->m_right = std::make_unique<Node>('|', std::move(c), std::move(a));
-
+        root = distribute(a, b, c);
         root->m_left = applyDistributiveLaw(root->m_left);
         root->m_right = applyDistributiveLaw(root->m_right);
     }
 
     return std::move(root);
 }
-
-std::unique_ptr<Node> applyDistributiveLaw2(std::unique_ptr<Node>& root)
-{
-    if (!root)
-        return nullptr;
-
-    root->m_left  = applyDistributiveLaw(root->m_left);
-    root->m_right = applyDistributiveLaw(root->m_right);
-
-	/*
-    if (root->m_data == '&')
-		std::cout << "& - l:" << root->m_left->m_data << "r:" << root->m_right->m_data << std::endl;
-    if (root->m_data == '|')
-		std::cout << "| - l:" << root->m_left->m_data << "r:" << root->m_right->m_data << std::endl;
-	*/
-	if (root->m_data == '|' && root->m_left && root->m_right &&
-	 (root->m_left->m_data == '&' || root->m_right->m_data == '&'))
-	{
-		//std::cout << "m_left\n";
-        if (root->m_left->m_data == '&')
-		{
-			std::unique_ptr<Node> a = std::move(root->m_left);
-			std::unique_ptr<Node> b = std::move(root->m_right->m_left);
-			std::unique_ptr<Node> c = std::move(root->m_right->m_right);
-
-            root->m_data = '&';
-            root->m_left = std::make_unique<Node>('|', std::move(b), (a->clone()));
-            root->m_right = std::make_unique<Node>('|', std::move(c), std::move(a));
-
-            applyDistributiveLaw(root->m_left);
-            applyDistributiveLaw(root->m_right);
-        }
-		else
-		{
-			std::unique_ptr<Node> a = std::move(root->m_left);
-			std::unique_ptr<Node> b = std::move(root->m_right->m_left);
-			std::unique_ptr<Node> c = std::move(root->m_right->m_right);
-
-            root->m_data = '&';
-            root->m_left = std::make_unique<Node>('|', std::move(b),  std::unique_ptr<Node>(a->clone()));
-            root->m_right = std::make_unique<Node>('|', std::move(c), std::move(a));
-
-            applyDistributiveLaw(root->m_left);
-            applyDistributiveLaw(root->m_right);
-        }
-    }
-
-    return std::move(root);
-}
-
 
 std::unique_ptr<RPNNode> buildTree(const std::string& formula)
 {

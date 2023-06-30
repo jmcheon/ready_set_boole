@@ -207,7 +207,14 @@ void	RSB::printTruthTable(const std::string& formula, bool ordered)
 
 	checkFormula(formula);
 	variables = getVariables(formula, ordered);
-	variable_count = variables.back().second;
+	/*
+	for (auto it = variables.begin(); it != variables.end(); ++it)
+		std::cout << it->first << ", " << it->second << std::endl;
+	*/
+	variable_count = std::max_element(variables.begin(), variables.end(),
+	[](const std::pair<char, size_t>& lhs, const std::pair<char, size_t>& rhs) {
+	    return lhs.second < rhs.second;
+	})->second;
 	// print column headers
 	std::cout << "| ";
 	for (size_t i = 0; i <= variable_count - 1; ++i)
@@ -440,76 +447,18 @@ static std::unique_ptr<Node> parse(const std::string& formula)
 // ex06 Conjunctive Normal Form
 const std::string	RSB::conjunctiveNormalForm(const std::string& formula)
 {
-	std::unique_ptr<Node>	root;
-	std::vector<std::pair<char, size_t> > variables;
+	std::unique_ptr<Node>	cnf;
 	std::string temp_formula;
-	std::string dnf;
-	size_t variable_count = 0;
-	size_t rows = 0;
-	size_t zeros = 0;
+	std::string result;
 
 	checkFormula(formula);
-	variables = getVariables(formula, false);
-	variable_count = variables.back().second;
-	rows = 1 << variable_count;
-	std::cout << std::endl;
-	for (size_t i = 0; i < rows; ++i)
-	{
-		//std::cout << "| ";
-		temp_formula = formula;
-		std::string	temp;
-		for (const auto& variable : variables)
-		{
-			size_t m_value = (i >> (variable.second - 1)) & 1;
-			temp.push_back(m_value + '0');
-			//std::cout << m_value << " | ";
-			std::replace(temp_formula.begin(), temp_formula.end(), variable.first, (char)(m_value + '0'));
-		}
-		if (!evalFormula(temp_formula))
-		{
-			zeros++;
-			size_t	i = 0;
-			for (char c : temp)
-			{
-				if (isdigit(c))
-				{
-					if (c == '1')
-						dnf += variables[i].first;
-					else if (c == '0')
-					{
-						dnf += (variables[i].first);
-						dnf += "!";
-					}
-					i++;
-					if (i == variables.back().second)
-						i = 0;
-				}
-			}
-			for (size_t i = 0; i < variable_count - 1; ++i)
-				dnf += "&";
-		}
-		//std::cout << evalFormula(temp_formula) << " |\n";
-	}
-	for (size_t i = 1; i < zeros; ++i)
-		dnf += "|";
-	dnf += "!";
-	//std::cout << "dnf : " << dnf << std::endl;
-	//temp_formula = negationNormalForm(dnf);
 	temp_formula = negationNormalForm(formula);
 	temp_formula = rearrange_formula(temp_formula);
+	cnf = parse(temp_formula);
+	cnf = applyDistributiveLaw(cnf);
+	result = postorder(cnf);
 
-	root = parse(temp_formula);
-	std::string output = postorder(root);
-	std::cout << "root: " << output << std::endl;
-
-	std::unique_ptr<Node> cnf = applyDistributiveLaw(root);
-	output = postorder(cnf);
-	//output = inorder(cnf);
-	std::cout << "CNF: " << output << std::endl;
-
-	//return conjunctive_normal_form(temp_formula);
-	//return rearrange_rpn(temp_formula);
-	return output;
+	return result;
 };
 
 // ex07 SAT  O(2^n) / NA
