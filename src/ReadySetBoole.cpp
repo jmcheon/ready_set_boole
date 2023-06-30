@@ -1,5 +1,6 @@
 #include "ReadySetBoole.hpp"
 
+// ex00 Adder O(1) / O(1)
 unsigned int RSB::adder(unsigned int a, unsigned int b)
 {
 	unsigned int carry = 0;
@@ -13,6 +14,7 @@ unsigned int RSB::adder(unsigned int a, unsigned int b)
 	return (a);
 };
 
+// ex01 Multiplier O(1) / O(1)
 unsigned int RSB::multiplier(unsigned int a, unsigned int b)
 {
 	unsigned int result = 0;
@@ -28,6 +30,7 @@ unsigned int RSB::multiplier(unsigned int a, unsigned int b)
 	return (result);
 };
 
+// ex02 Gray code
 unsigned int RSB::grayCode(unsigned int n)
 {
 	// perform XOR operation between n and n shifted right by 1 bit
@@ -110,6 +113,7 @@ static void	checkFormula(const std::string& formula)
 		throw std::runtime_error("Invalid formula");
 }
 
+// ex03 Boolean evaluation O(n) / NA
 bool	RSB::evalFormula(const std::string& formula)
 {
 	std::stack<bool>	eval_stack;
@@ -144,16 +148,11 @@ bool	RSB::evalFormula(const std::string& formula)
 	return eval_stack.top();
 };
 
-void	RSB::printTruthTable(const std::string& formula, bool ordered)
+static std::vector<std::pair<char, size_t> >	getVariables(const std::string& formula, bool ordered)
 {
-	size_t variable_count = 0;
-	size_t rows = 0;
-	std::string temp_formula = formula;
 	std::vector<std::pair<char, size_t> > variables;
+	size_t variable_count = 0;
 
-
-	checkFormula(formula);
-	// print column headers
 	for (char c : formula)
 	{
 		if (isalpha(c))
@@ -194,6 +193,22 @@ void	RSB::printTruthTable(const std::string& formula, bool ordered)
 			return pair1.first < pair2.first;
 		});
 	}
+	return variables;
+};
+
+// ex04 Truth table  O(2^n) / NA
+void	RSB::printTruthTable(const std::string& formula, bool ordered)
+{
+	std::vector<std::pair<char, size_t> > variables;
+	std::string temp_formula;
+	size_t variable_count = 0;
+	size_t rows = 0;
+
+
+	checkFormula(formula);
+	variables = getVariables(formula, ordered);
+	variable_count = variables.back().second;
+	// print column headers
 	std::cout << "| ";
 	for (size_t i = 0; i <= variable_count - 1; ++i)
 		std::cout << variables[i].first << " | ";
@@ -306,6 +321,7 @@ static const std::string	simplifyForm(const std::string& formula)
 	return stack.top();
 };
 
+// ex05 Negation Normal Form
 const std::string	RSB::negationNormalForm(const std::string& formula)
 {
 	std::stack<std::string> stack;
@@ -342,23 +358,6 @@ const std::string	RSB::negationNormalForm(const std::string& formula)
 	return stack.top();
 };
 
-static std::string 	rearrange(const std::string& formula)
-{
-    std::string result, disjunctions, conjunctions;
-
-    for (char c : formula) {
-        if (c == '&')
-            conjunctions.push_back(c);
-        else if (c == '|')
-            disjunctions.push_back(c);
-        else 
-            result.push_back(c);
-    }
-
-    result += disjunctions + conjunctions;
-    return result;
-}
-
 bool is_operator(const char c)
 {
     return c == '&' || c == '|';
@@ -374,122 +373,116 @@ int get_operator_priority(const char op)
         priority = 1;
     return priority;
 }
-
-std::string rearrange_rpn(const std::string &formula)
+static std::string 	rearrange(const std::string& formula)
 {
-    std::stack<char> operator_stack;
-    std::string result;
+    std::string result, disjunctions, conjunctions;
 
     for (char c : formula)
 	{
-        if (is_operator(c))
-		{
-            while (!operator_stack.empty() &&
-                   get_operator_priority(c) < get_operator_priority(operator_stack.top()))
-			{
-                result.push_back(operator_stack.top());
-                operator_stack.pop();
-            }
-            //operator_stack.push(c);
-			if (c == '|')
-                operator_stack.push(c);
-            else
-                result.push_back(c);
-        }
-		else
+        if (c == '&')
+            conjunctions.push_back(c);
+        else if (c == '|')
+            disjunctions.push_back(c);
+        else 
             result.push_back(c);
     }
 
-    while (!operator_stack.empty())
+    result += disjunctions + conjunctions;
+    return result;
+}
+
+static std::string 	rearrange_formula(const std::string& formula)
+{
+	bool	disjunction, conjunction;
+
+    for (char c : formula)
 	{
-        result.push_back(operator_stack.top());
-        operator_stack.pop();
+        if (c == '&')
+			conjunction = true;
+        else if (c == '|')
+			disjunction = true;
     }
 
-    return result;
+	if (conjunction && !disjunction)
+		return rearrange(formula);
+	else if (!conjunction && disjunction)
+		return rearrange(formula);
+	return formula;
 }
 
-std::string conjunctive_normal_form(const std::string &rpn) {
-    std::string result;
-    std::stack<char> operator_stack;
-    int conjunction_count = 0;
-
-    for (char c : rpn) {
-        if (is_operator(c)) {
-            if (c == '&') {
-                ++conjunction_count;
-            } else {
-                operator_stack.push(c);
-            }
-        } else {
-            result.push_back(c);
-        }
-    }
-
-    // Add disjunctions '|' from the stack to the result
-    while (!operator_stack.empty()) {
-        result.push_back(operator_stack.top());
-        operator_stack.pop();
-    }
-
-    // Add conjunctions '&' at the end
-    for (int i = 0; i < conjunction_count; ++i) {
-        result.push_back('&');
-    }
-
-    return result;
-}
-
+// ex06 Conjunctive Normal Form
 const std::string	RSB::conjunctiveNormalForm(const std::string& formula)
 {
-	std::string	temp_formula;
+	std::vector<std::pair<char, size_t> > variables;
+	std::string temp_formula;
+	std::string dnf;
+	size_t variable_count = 0;
+	size_t rows = 0;
+	size_t zeros = 0;
 
 	checkFormula(formula);
-	temp_formula = negationNormalForm(formula);
-
-	(void)rearrange;
-	//if (temp_formula.length() > 5)
-		//return rearrange(temp_formula);
+	variables = getVariables(formula, false);
+	variable_count = variables.back().second;
+	rows = 1 << variable_count;
+	std::cout << std::endl;
+	for (size_t i = 0; i < rows; ++i)
+	{
+		//std::cout << "| ";
+		temp_formula = formula;
+		std::string	temp;
+		for (const auto& variable : variables)
+		{
+			size_t m_value = (i >> (variable.second - 1)) & 1;
+			temp.push_back(m_value + '0');
+			//std::cout << m_value << " | ";
+			std::replace(temp_formula.begin(), temp_formula.end(), variable.first, (char)(m_value + '0'));
+		}
+		if (!evalFormula(temp_formula))
+		{
+			zeros++;
+			size_t	i = 0;
+			for (char c : temp)
+			{
+				if (isdigit(c))
+				{
+					if (c == '1')
+						dnf += variables[i].first;
+					else if (c == '0')
+					{
+						dnf += (variables[i].first);
+						dnf += "!";
+					}
+					i++;
+					if (i == variables.back().second)
+						i = 0;
+				}
+			}
+			for (size_t i = 0; i < variable_count - 1; ++i)
+				dnf += "&";
+		}
+		//std::cout << evalFormula(temp_formula) << " |\n";
+	}
+	for (size_t i = 1; i < zeros; ++i)
+		dnf += "|";
+	dnf += "!";
+	//std::cout << "dnf : " << dnf << std::endl;
+	temp_formula = negationNormalForm(dnf);
+	rearrange_formula(temp_formula);
 	//return conjunctive_normal_form(temp_formula);
-	return rearrange_rpn(temp_formula);
+	//return rearrange_rpn(temp_formula);
 	return temp_formula;
 };
 
+// ex07 SAT  O(2^n) / NA
 bool	RSB::sat(const std::string& formula)
 {
-	size_t variable_count = 0;
-	size_t rows = 0;
-	std::string temp_formula = formula;
 	std::vector<std::pair<char, size_t> > variables;
+	std::string temp_formula = formula;
+	size_t rows = 0;
 
 	checkFormula(formula);
-	for (char c : formula)
-	{
-		if (isalpha(c))
-		{
-			bool exist = false;
-			for (size_t j = 0; j < variables.size(); ++j)
-			{
-				if (variables[j].first == c)
-				{
-					exist = true;
-					break;
-				}
-			}
-			if (!exist)
-			{
-				variable_count++;
-				variables.emplace_back(c, variable_count);
-			}
-		}
-		else if (c == '0' || c == '1')
-		{
-			std::stringstream error_message;
-			error_message << "Invalid symbol '" << c << "'";
-			throw std::runtime_error(error_message.str());
-		}
-	}
-	rows = 1 << variable_count;
+	variables = getVariables(formula, false);
+	rows = 1 << variables.back().second;
 
 	for (size_t i = 0; i < rows; ++i)
 	{
@@ -516,6 +509,7 @@ static void	generatePowerset(const t_set& set, t_set& current_set, int index, t_
 	}
 };
 
+// ex08 Powerset  NA / O(2^n)
 t_powerset	RSB::powerset(t_set& set)
 {
 	t_powerset	powerset;
@@ -525,12 +519,13 @@ t_powerset	RSB::powerset(t_set& set)
 	return powerset;
 };
 
+// ex09 Set evaluation
 t_set	RSB::evalSet(const std::string& formula, const t_powerset& sets)
 {
-	std::string			temp_formula;
 	std::stack<t_set>	stack;
-	t_set				universal_set;
 	std::vector<char>	variables;
+	std::string			temp_formula;
+	t_set				universal_set;
 	size_t				variable_count = 0;
 
 	for (const t_set& set : sets)

@@ -94,10 +94,7 @@ void	ex04(int argc, char** argv)
 	if (argc >= 3)
  		formula = (std::string)argv[2];
 	if (argc == 4)
-	{
 		ordered = argv[3];
-		std:: cout << ordered << std::endl;
-	}
 	if (formula.empty())
 	{
 		std::cout << "formula: AB&C|\n" << std::endl;
@@ -157,6 +154,7 @@ void	ex06(int argc, char** argv)
 	{
 		if (!parseFormula(formula))
 			return ;
+		//formula = "A!BC!||AB!C!||A!B!C!||&&";
 		std::cout << formula << " -> " << GREEN << rsb.conjunctiveNormalForm(formula) << FIN << std::endl;
 	}
 }
