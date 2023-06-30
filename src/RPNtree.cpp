@@ -54,8 +54,8 @@ void	printTreeLeftview(const std::string& prefix, const RPNNode* node, bool is_l
         	printTreeLeftview(prefix + (is_left ? "   " : "│  "), unary_node->getOperand(), true);
     	if (const BinaryOperatorNode* binary_node = dynamic_cast<const BinaryOperatorNode*>(node))
 		{
-        	printTreeLeftview(prefix + (is_left ? "   " : "   "), binary_node->getRight(), false);
-        	printTreeLeftview(prefix + (is_left ? "   " : "   "), binary_node->getLeft(), true);
+        	printTreeLeftview(prefix + (is_left ? "   " : "│  "), binary_node->getRight(), false);
+        	printTreeLeftview(prefix + (is_left ? "   " : "│  "), binary_node->getLeft(), true);
     	}
     }
 }

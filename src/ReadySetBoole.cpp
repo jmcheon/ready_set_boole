@@ -144,16 +144,16 @@ bool	RSB::evalFormula(const std::string& formula)
 	return eval_stack.top();
 };
 
-void	RSB::printTruthTable(const std::string& formula)
+void	RSB::printTruthTable(const std::string& formula, bool ordered)
 {
 	size_t variable_count = 0;
 	size_t rows = 0;
 	std::string temp_formula = formula;
 	std::vector<std::pair<char, size_t> > variables;
 
+
 	checkFormula(formula);
 	// print column headers
-	std::cout << "| ";
 	for (char c : formula)
 	{
 		if (isalpha(c))
@@ -169,7 +169,6 @@ void	RSB::printTruthTable(const std::string& formula)
 			}
 			if (!exist)
 			{
-				std::cout << c << " | ";
 				variable_count++;
 				variables.emplace_back(c, variable_count);
 			}
@@ -181,6 +180,23 @@ void	RSB::printTruthTable(const std::string& formula)
 			throw std::runtime_error(error_message.str());
 		}
 	}
+	if (ordered)
+	{
+		std::sort(variables.begin(), variables.end(), [](auto& pair1, auto& pair2) {
+			size_t temp;
+	
+			if (pair1.first < pair2.first)
+			{
+				temp = pair1.second;
+				pair1.second = pair2.second;
+				pair2.second = temp;
+			}
+			return pair1.first < pair2.first;
+		});
+	}
+	std::cout << "| ";
+	for (size_t i = 0; i <= variable_count - 1; ++i)
+		std::cout << variables[i].first << " | ";
 	std::cout << "= |\n";
 	for (size_t i = 0; i <= variable_count; ++i)
 		std::cout << "|---";
@@ -343,6 +359,87 @@ static std::string 	rearrange(const std::string& formula)
     return result;
 }
 
+bool is_operator(const char c)
+{
+    return c == '&' || c == '|';
+}
+
+int get_operator_priority(const char op)
+{
+    int priority = 0;
+
+    if (op == '&')
+        priority = 2;
+    else if (op == '|')
+        priority = 1;
+    return priority;
+}
+
+std::string rearrange_rpn(const std::string &formula)
+{
+    std::stack<char> operator_stack;
+    std::string result;
+
+    for (char c : formula)
+	{
+        if (is_operator(c))
+		{
+            while (!operator_stack.empty() &&
+                   get_operator_priority(c) < get_operator_priority(operator_stack.top()))
+			{
+                result.push_back(operator_stack.top());
+                operator_stack.pop();
+            }
+            //operator_stack.push(c);
+			if (c == '|')
+                operator_stack.push(c);
+            else
+                result.push_back(c);
+        }
+		else
+            result.push_back(c);
+    }
+
+    while (!operator_stack.empty())
+	{
+        result.push_back(operator_stack.top());
+        operator_stack.pop();
+    }
+
+    return result;
+}
+
+std::string conjunctive_normal_form(const std::string &rpn) {
+    std::string result;
+    std::stack<char> operator_stack;
+    int conjunction_count = 0;
+
+    for (char c : rpn) {
+        if (is_operator(c)) {
+            if (c == '&') {
+                ++conjunction_count;
+            } else {
+                operator_stack.push(c);
+            }
+        } else {
+            result.push_back(c);
+        }
+    }
+
+    // Add disjunctions '|' from the stack to the result
+    while (!operator_stack.empty()) {
+        result.push_back(operator_stack.top());
+        operator_stack.pop();
+    }
+
+    // Add conjunctions '&' at the end
+    for (int i = 0; i < conjunction_count; ++i) {
+        result.push_back('&');
+    }
+
+    return result;
+}
+
 const std::string	RSB::conjunctiveNormalForm(const std::string& formula)
 {
 	std::string	temp_formula;
@@ -350,8 +447,11 @@ const std::string	RSB::conjunctiveNormalForm(const std::string& formula)
 	checkFormula(formula);
 	temp_formula = negationNormalForm(formula);
 
-	if (temp_formula.length() > 5)
-		return rearrange(temp_formula);
+	(void)rearrange;
+	//if (temp_formula.length() > 5)
+		//return rearrange(temp_formula);
+	//return conjunctive_normal_form(temp_formula);
+	return rearrange_rpn(temp_formula);
 	return temp_formula;
 };
 

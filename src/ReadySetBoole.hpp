@@ -31,7 +31,7 @@ class RSB
 	// ex03 Boolean evaluation O(n) / NA
 	bool	evalFormula(const std::string& formula);
 	// ex04 Truth table  O(2^n) / NA
-	void	printTruthTable(const std::string& formula);
+	void	printTruthTable(const std::string& formula, bool ordered = false);
 	// ex05 Negation Normal Form
 	const std::string	negationNormalForm(const std::string& formula);
 	// ex06 Conjunctive Normal Form

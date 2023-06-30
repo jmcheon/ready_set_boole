@@ -28,8 +28,8 @@ void	ex00(int argc, char** argv)
 	RSB rsb;
 	if (argc == 4)
 	{
-		std::cout << GREEN << std::atoi(argv[2]) << " + " << std::atoi(argv[3]) << " = ";
-		std::cout << rsb.adder(std::atoi(argv[2]), std::atoi(argv[3])) << FIN << std::endl;
+		std::cout << std::atoi(argv[2]) << " + " << std::atoi(argv[3]) << " = ";
+		std::cout << GREEN << rsb.adder(std::atoi(argv[2]), std::atoi(argv[3])) << FIN << std::endl;
 	}
 }
 
@@ -39,8 +39,8 @@ void	ex01(int argc, char** argv)
 	RSB rsb;
 	if (argc == 4)
 	{
-		std::cout << GREEN << std::atoi(argv[2]) << " * " << std::atoi(argv[3]) << " = ";
-		std::cout << rsb.multiplier(std::atoi(argv[2]), std::atoi(argv[3])) << FIN << std::endl;
+		std::cout << std::atoi(argv[2]) << " * " << std::atoi(argv[3]) << " = ";
+		std::cout << GREEN << rsb.multiplier(std::atoi(argv[2]), std::atoi(argv[3])) << FIN << std::endl;
 	}
 }
 
@@ -50,18 +50,18 @@ void	ex02(int argc, char** argv)
 	RSB rsb;
 	if (argc == 2)
 	{
-		std::cout << GREEN << rsb.grayCode(0) << FIN << std::endl; // 0
-		std::cout << GREEN << rsb.grayCode(1) << FIN << std::endl; // 1
-		std::cout << GREEN << rsb.grayCode(2) << FIN << std::endl; // 3
-		std::cout << GREEN << rsb.grayCode(3) << FIN << std::endl; // 2
-		std::cout << GREEN << rsb.grayCode(4) << FIN << std::endl; // 6
-		std::cout << GREEN << rsb.grayCode(5) << FIN << std::endl; // 7
-		std::cout << GREEN << rsb.grayCode(6) << FIN << std::endl; // 5
-		std::cout << GREEN << rsb.grayCode(7) << FIN << std::endl; // 4
-		std::cout << GREEN << rsb.grayCode(8) << FIN << std::endl; // 12
+		std::cout << "0 -> " <<  GREEN << rsb.grayCode(0) << FIN << std::endl; // 0
+		std::cout << "1 -> " <<  GREEN << rsb.grayCode(1) << FIN << std::endl; // 1
+		std::cout << "2 -> " <<  GREEN << rsb.grayCode(2) << FIN << std::endl; // 3
+		std::cout << "3 -> " <<  GREEN << rsb.grayCode(3) << FIN << std::endl; // 2
+		std::cout << "4 -> " <<  GREEN << rsb.grayCode(4) << FIN << std::endl; // 6
+		std::cout << "5 -> " <<  GREEN << rsb.grayCode(5) << FIN << std::endl; // 7
+		std::cout << "6 -> " <<  GREEN << rsb.grayCode(6) << FIN << std::endl; // 5
+		std::cout << "7 -> " <<  GREEN << rsb.grayCode(7) << FIN << std::endl; // 4
+		std::cout << "8 -> " <<  GREEN << rsb.grayCode(8) << FIN << std::endl; // 12
 	}
 	else
-		std::cout << GREEN << rsb.grayCode(std::atoi(argv[2])) << FIN << std::endl;
+		std::cout << argv[2] << " -> " << GREEN << rsb.grayCode(std::atoi(argv[2])) << FIN << std::endl;
 }
 
 void	ex03(int argc, char** argv)
@@ -74,31 +74,40 @@ void	ex03(int argc, char** argv)
  		formula = (std::string)argv[2];
 	if (formula.empty())
 	{
-		std::cout << GREEN << rsb.evalFormula("10&") << FIN << std::endl;     // false
-   		std::cout << GREEN << rsb.evalFormula("10|") << FIN << std::endl;     // true
-   		std::cout << GREEN << rsb.evalFormula("11>") << FIN << std::endl;     // true
-   		std::cout << GREEN << rsb.evalFormula("10=") << FIN << std::endl;     // false
-   		std::cout << GREEN << rsb.evalFormula("1011||=") << FIN << std::endl; // true
+		std::cout << "10& -> " << GREEN << rsb.evalFormula("10&") << FIN << std::endl;     // false
+   		std::cout << "10| -> " << GREEN << rsb.evalFormula("10|") << FIN << std::endl;     // true
+   		std::cout << "11> -> " << GREEN << rsb.evalFormula("11>") << FIN << std::endl;     // true
+   		std::cout << "10= -> " << GREEN << rsb.evalFormula("10=") << FIN << std::endl;     // false
+   		std::cout << "1011||= -> " << GREEN << rsb.evalFormula("1011||=") << FIN << std::endl; // true
 	}
 	else
-   		std::cout << GREEN << rsb.evalFormula(formula) << FIN << std::endl;
+   		std::cout << formula << " -> " << GREEN << rsb.evalFormula(formula) << FIN << std::endl;
 }
 
 void	ex04(int argc, char** argv)
 {
-	std::cout << "Running ex04 - truth table..." << std::endl;
+	std::cout << "Running ex04 - truth table...\n" << std::endl;
 	std::string	formula;
 	RSB			rsb;
+	bool		ordered = false;
 
 	if (argc >= 3)
  		formula = (std::string)argv[2];
+	if (argc == 4)
+	{
+		ordered = argv[3];
+		std:: cout << ordered << std::endl;
+	}
 	if (formula.empty())
-		rsb.printTruthTable("AB&C|");
+	{
+		std::cout << "formula: AB&C|\n" << std::endl;
+		rsb.printTruthTable("AB&C|", ordered);
+	}
 	else
 	{
 		if (!parseFormula(formula))
 			return ;
-		rsb.printTruthTable(formula);
+		rsb.printTruthTable(formula, ordered);
 	}
 }
 
@@ -112,17 +121,17 @@ void	ex05(int argc, char** argv)
  		formula = (std::string)argv[2];
 	if (formula.empty())
 	{
-		std::cout << GREEN << rsb.negationNormalForm("AB&!") << FIN << std::endl;
-		std::cout << GREEN << rsb.negationNormalForm("AB|!") << FIN << std::endl;
-		std::cout << GREEN << rsb.negationNormalForm("AB>") << FIN << std::endl;
-		std::cout << GREEN << rsb.negationNormalForm("AB=") << FIN << std::endl;
-		std::cout << GREEN << rsb.negationNormalForm("AB|C&!") << FIN << std::endl;
+		std::cout << "AB&! -> " << GREEN << rsb.negationNormalForm("AB&!") << FIN << std::endl;
+		std::cout << "AB|! -> " << GREEN << rsb.negationNormalForm("AB|!") << FIN << std::endl;
+		std::cout << "AB^ -> " << GREEN << rsb.negationNormalForm("AB>") << FIN << std::endl;
+		std::cout << "AB= -> " << GREEN << rsb.negationNormalForm("AB=") << FIN << std::endl;
+		std::cout << "AB|C&! -> " << GREEN << rsb.negationNormalForm("AB|C&!") << FIN << std::endl;
 	}
 	else
 	{
 		if (!parseFormula(formula))
 			return ;
-		std::cout << GREEN << rsb.negationNormalForm(formula) << FIN << std::endl;
+		std::cout << formula << " -> " << GREEN << rsb.negationNormalForm(formula) << FIN << std::endl;
 	}
 }
 
@@ -136,19 +145,19 @@ void	ex06(int argc, char** argv)
  		formula = (std::string)argv[2];
 	if (formula.empty())
 	{
-		std::cout << GREEN << rsb.conjunctiveNormalForm("AB&!") << FIN << std::endl; // A!B!|
-		std::cout << GREEN << rsb.conjunctiveNormalForm("AB|!") << FIN << std::endl; // A!B!&
-		std::cout << GREEN << rsb.conjunctiveNormalForm("AB|C&") << FIN << std::endl; // AB|C&
-		std::cout << GREEN << rsb.conjunctiveNormalForm("AB|C|D|") << FIN << std::endl; // ABCD|||
-		std::cout << GREEN << rsb.conjunctiveNormalForm("AB&C&D&") << FIN << std::endl; // ABCD&&&
-		std::cout << GREEN << rsb.conjunctiveNormalForm("AB&!C!|") << FIN << std::endl; // A!B!C!||
-		std::cout << GREEN << rsb.conjunctiveNormalForm("AB|!C!&") << FIN << std::endl; // A!B!C!&&
+		std::cout << "AB&! -> " << GREEN << rsb.conjunctiveNormalForm("AB&!") << FIN << std::endl; // A!B!|
+		std::cout << "AB|! -> " << GREEN << rsb.conjunctiveNormalForm("AB|!") << FIN << std::endl; // A!B!&
+		std::cout << "AB|C& -> " << GREEN <<  rsb.conjunctiveNormalForm("AB|C&") << FIN << std::endl; // AB|C&
+		std::cout << "AB|C|D| -> " << GREEN << rsb.conjunctiveNormalForm("AB|C|D|") << FIN << std::endl; // ABCD|||
+		std::cout << "AB&C&D& -> " << GREEN << rsb.conjunctiveNormalForm("AB&C&D&") << FIN << std::endl; // ABCD&&&
+		std::cout << "AB&!C!| -> " << GREEN << rsb.conjunctiveNormalForm("AB&!C!|") << FIN << std::endl; // A!B!C!||
+		std::cout << "AB|!C!& -> " << GREEN << rsb.conjunctiveNormalForm("AB|!C!&") << FIN << std::endl; // A!B!C!&&
 	}
 	else
 	{
 		if (!parseFormula(formula))
 			return ;
-		std::cout << GREEN << rsb.conjunctiveNormalForm(formula) << FIN << std::endl;
+		std::cout << formula << " -> " << GREEN << rsb.conjunctiveNormalForm(formula) << FIN << std::endl;
 	}
 }
 
@@ -162,16 +171,16 @@ void	ex07(int argc, char** argv)
  		formula = (std::string)argv[2];
 	if (formula.empty())
 	{
-		std::cout << GREEN << rsb.sat("AB|") << FIN << std::endl; // true
-		std::cout << GREEN << rsb.sat("AB&") << FIN << std::endl; // true
-		std::cout << GREEN << rsb.sat("AA!&") << FIN << std::endl; // false
-		std::cout << GREEN << rsb.sat("AA^") << FIN << std::endl; // false
+		std::cout << "AB| -> " << GREEN << rsb.sat("AB|") << FIN << std::endl; // true
+		std::cout << "AB& -> " << GREEN << rsb.sat("AB&") << FIN << std::endl; // true
+		std::cout << "AA!& -> " << GREEN << rsb.sat("AA!&") << FIN << std::endl; // false
+		std::cout << "AA^ -> " << GREEN << rsb.sat("AA^") << FIN << std::endl; // false
 	}
 	else
 	{
 		if (!parseFormula(formula))
 			return ;
-		std::cout << GREEN << rsb.sat(formula) << FIN << std::endl;
+		std::cout << formula << " -> " << GREEN << rsb.sat(formula) << FIN << std::endl;
 	}
 }
 
