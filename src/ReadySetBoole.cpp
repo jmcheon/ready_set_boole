@@ -365,21 +365,6 @@ const std::string	RSB::negationNormalForm(const std::string& formula)
 	return stack.top();
 };
 
-bool is_operator(const char c)
-{
-    return c == '&' || c == '|';
-}
-
-int get_operator_priority(const char op)
-{
-    int priority = 0;
-
-    if (op == '&')
-        priority = 2;
-    else if (op == '|')
-        priority = 1;
-    return priority;
-}
 static std::string 	rearrange(const std::string& formula)
 {
     std::string result, disjunctions, conjunctions;
@@ -398,7 +383,7 @@ static std::string 	rearrange(const std::string& formula)
     return result;
 }
 
-static std::string 	rearrange_formula(const std::string& formula)
+static std::string 	rearrangeOnlyAndOr(const std::string& formula)
 {
 	bool	disjunction, conjunction;
 
@@ -417,31 +402,25 @@ static std::string 	rearrange_formula(const std::string& formula)
 	return formula;
 }
 
-static std::unique_ptr<Node> parse(const std::string& formula)
+static bool checkAndBeforeOr(const std::string& formula)
 {
-	std::stack<std::unique_ptr<Node> > stack;
-	
+	bool	or_op = false;
+	bool	and_op = false;
+
+	(void)or_op;
 	for (char c : formula)
 	{
-		if (c >= 'A' && c <= 'Z')
+		if (c == '&')
+			and_op = true;
+		if (c == '|')
 		{
-			std::unique_ptr<Node> new_node = std::make_unique<Node>(c, nullptr, nullptr);
-			stack.push(std::move(new_node));
+			if (and_op)
+				return true;
+			or_op = true;
 		}
-		else if (c == '!' || c == '&' || c == '|')
-		{
-			std::unique_ptr<Node> new_node = std::make_unique<Node>(c, nullptr, nullptr);
-			if (c != '!')
-			{
-				new_node->m_right = std::move(stack.top());
-				stack.pop();
-			}
-			new_node->m_left = std::move(stack.top());
-			stack.pop();
-			stack.push(std::move(new_node));
-		}
+
 	}
-	return std::move(stack.top());
+    return false;
 }
 
 // ex06 Conjunctive Normal Form
@@ -453,10 +432,18 @@ const std::string	RSB::conjunctiveNormalForm(const std::string& formula)
 
 	checkFormula(formula);
 	temp_formula = negationNormalForm(formula);
-	temp_formula = rearrange_formula(temp_formula);
-	cnf = parse(temp_formula);
-	cnf = applyDistributiveLaw(cnf);
-	result = postorder(cnf);
+	temp_formula = rearrangeOnlyAndOr(temp_formula);
+	if (checkAndBeforeOr(temp_formula))
+	{
+		cnf = buildTree2(temp_formula);
+		//std::cout << std::endl;
+		//printTree2(cnf.get(), true);
+		cnf = applyDistributiveLaw(cnf);
+		//printTree2(cnf.get(), true);
+		result = postorder(cnf);
+	}
+	else
+		result = temp_formula;
 
 	return result;
 };

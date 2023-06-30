@@ -12,8 +12,8 @@ class Node
 	    char	m_data;
 	    std::unique_ptr<Node>	m_left;
 	    std::unique_ptr<Node>	m_right;
+
 		Node(char data, std::unique_ptr<Node> left, std::unique_ptr<Node> right) : m_data(data), m_left(std::move(left)), m_right(std::move(right)) {}
-		// Node(char data) : m_data(data), m_left(nullptr), m_right(nullptr) {}
 		explicit Node(const char& data)
         : m_data(data), m_left(nullptr), m_right(nullptr) { }
 		std::unique_ptr<Node> clone() {
@@ -23,13 +23,23 @@ class Node
         if (m_right)
             newNode->m_right = (m_right->clone());
         return newNode;
-    }
+    	}
+
+		char			getValue() const { return m_data; }
+		const Node*		getLeft() const { return m_left.get(); }
+		const Node*		getRight() const { return m_right.get(); }
+		void			print() const { m_left->print(); m_right->print(); std::cout << m_data; }
+		void			traverse() const { std::cout << m_data; }
 
 };
 
+std::unique_ptr<Node> buildTree2(const std::string& formula);
 std::unique_ptr<Node> applyDistributiveLaw(std::unique_ptr<Node>& root);
 std::string	postorder(std::unique_ptr<Node>& root);
 std::string	inorder(std::unique_ptr<Node>& root);
+void	printTree2(const Node* node, bool leftview=false);
+void	printTreeRightview2(const std::string& prefix, const Node* node, bool is_left);
+void	printTreeLeftview2(const std::string& prefix, const Node* node, bool is_left);
 
 class RPNNode
 {

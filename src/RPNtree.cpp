@@ -1,5 +1,32 @@
 #include "RPNtree.hpp"
 
+std::unique_ptr<Node> buildTree2(const std::string& formula)
+{
+	std::stack<std::unique_ptr<Node> > stack;
+	
+	for (char c : formula)
+	{
+		if (c >= 'A' && c <= 'Z')
+		{
+			std::unique_ptr<Node> new_node = std::make_unique<Node>(c, nullptr, nullptr);
+			stack.push(std::move(new_node));
+		}
+		else if (c == '!' || c == '&' || c == '|')
+		{
+			std::unique_ptr<Node> new_node = std::make_unique<Node>(c, nullptr, nullptr);
+			if (c != '!')
+			{
+				new_node->m_right = std::move(stack.top());
+				stack.pop();
+			}
+			new_node->m_left = std::move(stack.top());
+			stack.pop();
+			stack.push(std::move(new_node));
+		}
+	}
+	return std::move(stack.top());
+}
+
 std::string	postorder(std::unique_ptr<Node>& root)
 {
 	std::string output;
@@ -34,7 +61,7 @@ std::unique_ptr<Node> distribute(std::unique_ptr<Node>& a, std::unique_ptr<Node>
 {
     auto new_root = std::make_unique<Node>('&');
     new_root->m_left = std::make_unique<Node>('|', a->clone(), std::move(b));
-    new_root->m_right = std::make_unique<Node>('|', std::move(a), std::move(c));
+    new_root->m_right = std::make_unique<Node>('|', a->clone(), std::move(c));
     return new_root;
 }
 
@@ -42,8 +69,7 @@ bool isDistributable(const std::unique_ptr<Node>& root)
 {
     if (!root)
         return false;
-    return (root->m_data == '|' && ((root->m_left && root->m_left->m_data == '&') || (root->m_right && root->m_right->m_data == '&'))) ||
-           (root->m_data == '&' && ((root->m_left && root->m_left->m_data == '|') || (root->m_right && root->m_right->m_data == '|')));
+    return (root->m_data == '|' && ((root->m_left && root->m_left->m_data == '&') || (root->m_right && root->m_right->m_data == '&')));
 }
 
 std::unique_ptr<Node> applyDistributiveLaw(std::unique_ptr<Node>& root)
@@ -65,10 +91,12 @@ std::unique_ptr<Node> applyDistributiveLaw(std::unique_ptr<Node>& root)
 			    a = std::move(root->m_right);
 			    b = std::move(root->m_left->m_left);
 			    c = std::move(root->m_left->m_right);
+				/*
         } else if (root->m_left && root->m_left->m_data == '|') {
 			    a = std::move(root->m_right);
 			    b = std::move(root->m_left->m_left);
 			    c = std::move(root->m_left->m_right);
+				*/
         } else { // (root->m_right && root->m_right->m_data == '|')
 			    a = std::move(root->m_left);
 			    b = std::move(root->m_right->m_left);
@@ -185,3 +213,38 @@ void	reverseTraversal(const RPNNode* node)
 		}
 }
 
+void	printTreeLeftview2(const std::string& prefix, const Node* node, bool is_left)
+{
+    if( node != nullptr )
+    {
+        std::cout << prefix;
+        std::cout << (is_left ? "└─" : "├─" );
+
+		node->traverse();
+    	std::cout << std::endl;
+        printTreeLeftview2(prefix + (is_left ? "   " : "│  "), node->getRight(), false);
+        printTreeLeftview2(prefix + (is_left ? "   " : "│  "), node->getLeft(), true);
+    }
+}
+
+void	printTreeRightview2(const std::string& prefix, const Node* node, bool is_left)
+{
+    if( node != nullptr )
+    {
+        std::cout << prefix;
+        std::cout << (is_left ? "├─" : "└─" );
+
+		node->traverse();
+    	std::cout << std::endl;
+        printTreeRightview2(prefix + (is_left ? "│  " : "   "), node->getLeft(), true);
+        printTreeRightview2(prefix + (is_left ? "│  " : "   "), node->getRight(), false);
+    }
+}
+
+void	printTree2(const Node* node, bool leftview)
+{
+	if (leftview)
+    	printTreeLeftview2("", node, true);
+	else
+    	printTreeRightview2("", node, false);
+}
