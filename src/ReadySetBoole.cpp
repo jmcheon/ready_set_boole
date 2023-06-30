@@ -410,9 +410,37 @@ static std::string 	rearrange_formula(const std::string& formula)
 	return formula;
 }
 
+static std::unique_ptr<Node> parse(const std::string& formula)
+{
+	std::stack<std::unique_ptr<Node> > stack;
+	
+	for (char c : formula)
+	{
+		if (c >= 'A' && c <= 'Z')
+		{
+			std::unique_ptr<Node> new_node = std::make_unique<Node>(c, nullptr, nullptr);
+			stack.push(std::move(new_node));
+		}
+		else if (c == '!' || c == '&' || c == '|')
+		{
+			std::unique_ptr<Node> new_node = std::make_unique<Node>(c, nullptr, nullptr);
+			if (c != '!')
+			{
+				new_node->m_right = std::move(stack.top());
+				stack.pop();
+			}
+			new_node->m_left = std::move(stack.top());
+			stack.pop();
+			stack.push(std::move(new_node));
+		}
+	}
+	return std::move(stack.top());
+}
+
 // ex06 Conjunctive Normal Form
 const std::string	RSB::conjunctiveNormalForm(const std::string& formula)
 {
+	std::unique_ptr<Node>	root;
 	std::vector<std::pair<char, size_t> > variables;
 	std::string temp_formula;
 	std::string dnf;
@@ -466,11 +494,22 @@ const std::string	RSB::conjunctiveNormalForm(const std::string& formula)
 		dnf += "|";
 	dnf += "!";
 	//std::cout << "dnf : " << dnf << std::endl;
-	temp_formula = negationNormalForm(dnf);
-	rearrange_formula(temp_formula);
+	//temp_formula = negationNormalForm(dnf);
+	temp_formula = negationNormalForm(formula);
+	temp_formula = rearrange_formula(temp_formula);
+
+	root = parse(temp_formula);
+	std::string output = postorder(root);
+	std::cout << "root: " << output << std::endl;
+
+	std::unique_ptr<Node> cnf = applyDistributiveLaw(root);
+	output = postorder(cnf);
+	//output = inorder(cnf);
+	std::cout << "CNF: " << output << std::endl;
+
 	//return conjunctive_normal_form(temp_formula);
 	//return rearrange_rpn(temp_formula);
-	return temp_formula;
+	return output;
 };
 
 // ex07 SAT  O(2^n) / NA

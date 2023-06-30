@@ -6,6 +6,31 @@
 #include <stack>
 #include <vector>
 
+class Node
+{
+	public:
+	    char	m_data;
+	    std::unique_ptr<Node>	m_left;
+	    std::unique_ptr<Node>	m_right;
+		Node(char data, std::unique_ptr<Node> left, std::unique_ptr<Node> right) : m_data(data), m_left(std::move(left)), m_right(std::move(right)) {}
+		// Node(char data) : m_data(data), m_left(nullptr), m_right(nullptr) {}
+		explicit Node(const char& data)
+        : m_data(data), m_left(nullptr), m_right(nullptr) { }
+		std::unique_ptr<Node> clone() {
+        std::unique_ptr<Node> newNode = std::make_unique<Node>(m_data);
+        if (m_left)
+            newNode->m_left = (m_left->clone());
+        if (m_right)
+            newNode->m_right = (m_right->clone());
+        return newNode;
+    }
+
+};
+
+std::unique_ptr<Node> applyDistributiveLaw(std::unique_ptr<Node>& root);
+std::string	postorder(std::unique_ptr<Node>& root);
+std::string	inorder(std::unique_ptr<Node>& root);
+
 class RPNNode
 {
 	public:
