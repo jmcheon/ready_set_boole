@@ -5,7 +5,6 @@ INCLUDES = ./
 SRCS_DIR = src/
 SRCS = main.cpp \
 		exercise.cpp \
-		Tokenizer.cpp \
 		RPNtree.cpp \
 		ReadySetBoole.cpp
 		

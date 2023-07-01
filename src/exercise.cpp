@@ -1,25 +1,4 @@
-#include "ReadySetBoole.hpp"
 #include "exercise.hpp"
-
-static bool	parseFormula(const std::string& formula)
-{
-	std::unique_ptr<RPNNode> rpn;
-	try
-	{
- 		rpn = buildTree(formula);
-		std::cout << "formula: ";
-        printNode(rpn.get());
-
-        printTree(rpn.get(), true);
-		std::cout << std::endl;
-    }
-	catch (const std::runtime_error& e)
-	{
-        std::cerr << "Error: " << e.what() << std::endl;
-		return false;
-    }
-	return true;
-}
 
 void	ex00(int argc, char** argv)
 {
@@ -101,7 +80,7 @@ void	ex04(int argc, char** argv)
 	}
 	else
 	{
-		if (!parseFormula(formula))
+		if (!checkFormula(formula))
 			return ;
 		rsb.printTruthTable(formula, ordered);
 	}
@@ -125,7 +104,7 @@ void	ex05(int argc, char** argv)
 	}
 	else
 	{
-		if (!parseFormula(formula))
+		if (!checkFormula(formula))
 			return ;
 		std::cout << formula << " -> " << GREEN << rsb.negationNormalForm(formula) << FIN << std::endl;
 	}
@@ -151,7 +130,7 @@ void	ex06(int argc, char** argv)
 	}
 	else
 	{
-		if (!parseFormula(formula))
+		if (!checkFormula(formula))
 			return ;
 		//formula = "A!BC!||AB!C!||A!B!C!||&&";
 		std::cout << formula << " -> " << GREEN << rsb.conjunctiveNormalForm(formula) << FIN << std::endl;
@@ -175,7 +154,7 @@ void	ex07(int argc, char** argv)
 	}
 	else
 	{
-		if (!parseFormula(formula))
+		if (!checkFormula(formula))
 			return ;
 		std::cout << formula << " -> " << GREEN << rsb.sat(formula) << FIN << std::endl;
 	}
@@ -251,7 +230,7 @@ void	ex09(int argc, char** argv)
 
 	for (int i = 3; i < argc; ++i)
 		sets.push_back(parseSet(argv[i]));	
-	if (!parseFormula(formula))
+	if (!checkFormula(formula))
 		return ;
 	if (!checkSets(formula, sets, variables))
 		return ;

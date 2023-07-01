@@ -58,67 +58,13 @@ static bool	evalOperator(char op, bool operand1, bool operand2)
 	}
 };
 
-static void	checkFormula(const std::string& formula)
-{
-	Tokenizer			tokenizer;
-    std::vector<Token>	tokens = tokenizer.tokenize(formula);
-    std::stack<char>	stack;
-    char				op1, op2;
-
-    //std::cout << "\n\t Formula syntax checking...\n";
-    for (const Token& token : tokens)
-	{
-        switch (token.m_type)
-		{
-            case TokenType::VARIABLE:
-				stack.push('1');
-                break;
-            case TokenType::BOOLEAN:
-				stack.push(token.m_value);
-                break;
-            case TokenType::NEGATION:
-	    		if (stack.size() >= 1)
-				{
-	    			op1 = stack.top();
-					stack.pop();
-					stack.push(!op1);
-				}
-				else
-				{
-					std::stringstream error_message;
-					error_message << "Invalid syntax '" << token.m_value << "'";
-					throw std::runtime_error(error_message.str());
-				}
-				break;
-			case TokenType::OPERATOR:
-			    if (stack.size() >= 2)
-				{
-					op1 = stack.top();
-					stack.pop();
-			    	op2 = stack.top();
-					stack.pop();
-					bool result = evalOperator(token.m_value, op1, op2);
-					stack.push(result);
-				}
-				else
-				{
-					std::stringstream error_message;
-					error_message << "Invalid syntax '" << token.m_value << "'";
-					throw std::runtime_error(error_message.str());
-				}
-				break;
-		}
-	}
-    if (stack.size() != 1)
-		throw std::runtime_error("Invalid formula");
-}
-
 // ex03 Boolean evaluation O(n) / NA
 bool	RSB::evalFormula(const std::string& formula)
 {
 	std::stack<bool>	eval_stack;
 	
-	checkFormula(formula);
+	if (!checkFormula(formula, false, false))
+		return false;
 	for (char c: formula)
 	{
 		if (std::isdigit(c))
@@ -205,7 +151,9 @@ void	RSB::printTruthTable(const std::string& formula, bool ordered)
 	size_t rows = 0;
 
 
-	checkFormula(formula);
+	//checkFormula(formula);
+	if (!checkFormula(formula, true, false))
+		return ;
 	variables = getVariables(formula, ordered);
 	/*
 	for (auto it = variables.begin(); it != variables.end(); ++it)
@@ -334,7 +282,9 @@ const std::string	RSB::negationNormalForm(const std::string& formula)
 	std::stack<std::string> stack;
 	std::string temp, temp2, temp_formula;
 
-	checkFormula(formula);
+	//checkFormula(formula);
+	if (!checkFormula(formula, true, false))
+		return formula;
 	temp_formula = simplifyForm(formula);
 	for (char c : temp_formula)
 	{
@@ -430,7 +380,9 @@ const std::string	RSB::conjunctiveNormalForm(const std::string& formula)
 	std::string temp_formula;
 	std::string result;
 
-	checkFormula(formula);
+	//checkFormula(formula);
+	if (!checkFormula(formula, true, false))
+		return formula;
 	temp_formula = negationNormalForm(formula);
 	temp_formula = rearrangeOnlyAndOr(temp_formula);
 	if (checkAndBeforeOr(temp_formula))
@@ -454,7 +406,9 @@ bool	RSB::sat(const std::string& formula)
 	std::string temp_formula = formula;
 	size_t rows = 0;
 
-	checkFormula(formula);
+	//checkFormula(formula);
+	if (!checkFormula(formula, true, false))
+		return false;
 	variables = getVariables(formula, false);
 	rows = 1 << variables.back().second;
 

@@ -56,11 +56,12 @@ class RPNNode
 
 };
 
-std::unique_ptr<RPNNode>	buildTree(const std::string& formula);
+std::unique_ptr<RPNNode>	buildTree(const std::string& formula, bool variable = true);
 std::unique_ptr<RPNNode>	applyDistributiveLaw(std::unique_ptr<RPNNode>& root);
 std::string					postorder(std::unique_ptr<RPNNode>& root);
 std::string					inorder(std::unique_ptr<RPNNode>& root);
 
+bool	checkFormula(const std::string& formula, bool variable = true, bool print = true);
 void	printNode(const RPNNode* node);
 void	printTree(const RPNNode* node, bool leftview=false);
 void	printTreeRightview(const std::string& prefix, const RPNNode* node, bool is_left);

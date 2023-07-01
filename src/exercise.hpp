@@ -2,6 +2,8 @@
 #define EXERCISE_HPP
 #include <iostream>
 #include <vector>
+#include "ReadySetBoole.hpp"
+#include "RPNtree.hpp"
 
 # define YELLOW "\033[0;38;5;220m"
 # define GREEN "\033[0;38;5;42m"

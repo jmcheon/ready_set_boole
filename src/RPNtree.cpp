@@ -1,13 +1,38 @@
 #include "RPNtree.hpp"
 
-std::unique_ptr<RPNNode> buildTree(const std::string& formula)
+bool	checkFormula(const std::string& formula, bool variable, bool print)
+{
+	std::unique_ptr<RPNNode> rpn;
+	try
+	{
+ 		rpn = buildTree(formula, variable);
+		if (print)
+		{
+			std::cout << "formula: ";
+        	printNode(rpn.get());
+        	printTree(rpn.get(), true);
+			std::cout << std::endl;
+		}
+    }
+	catch (const std::runtime_error& e)
+	{
+        std::cerr << "Error: " << e.what() << std::endl;
+		return false;
+    }
+	return true;
+}
+
+std::unique_ptr<RPNNode> buildTree(const std::string& formula, bool variable)
 {
 	std::stack<std::unique_ptr<RPNNode> > stack;
 	
 	for (char c : formula)
 	{
-		if (c >= 'A' && c <= 'Z')
+		if ((c >= 'A' && c <= 'Z') || (c == '1' || c == '0'))
 		{
+			if ((variable && !(c >= 'A' && c <= 'Z'))
+				|| (!variable && !(c == '1' || c == '0')))
+				throw std::runtime_error("Invalid formula: Unexpected symbol");
 			std::unique_ptr<RPNNode> new_node = std::make_unique<RPNNode>(c, nullptr, nullptr);
 			stack.push(std::move(new_node));
 		}
