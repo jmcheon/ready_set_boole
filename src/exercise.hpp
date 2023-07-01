@@ -1,5 +1,7 @@
 #ifndef EXERCISE_HPP
 #define EXERCISE_HPP
+#include <iostream>
+#include <vector>
 
 # define YELLOW "\033[0;38;5;220m"
 # define GREEN "\033[0;38;5;42m"

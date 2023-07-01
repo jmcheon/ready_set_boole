@@ -1,15 +1,12 @@
 #ifndef READYSETBOOLE_HPP
 #define READYSETBOOLE_HPP
-#include <iostream>
 #include <stack>
 #include <algorithm>
 #include <unordered_map>
 #include <functional>
 #include <unordered_set>
-#include <vector>
 #include "Tokenizer.hpp"
 #include "RPNtree.hpp"
-#include "exercise.hpp"
 
 typedef std::vector<int> t_set;
 typedef std::vector<std::vector<int> > t_powerset;

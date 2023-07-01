@@ -426,7 +426,7 @@ static bool checkAndBeforeOr(const std::string& formula)
 // ex06 Conjunctive Normal Form
 const std::string	RSB::conjunctiveNormalForm(const std::string& formula)
 {
-	std::unique_ptr<Node>	cnf;
+	std::unique_ptr<RPNNode>	cnf;
 	std::string temp_formula;
 	std::string result;
 
@@ -435,11 +435,10 @@ const std::string	RSB::conjunctiveNormalForm(const std::string& formula)
 	temp_formula = rearrangeOnlyAndOr(temp_formula);
 	if (checkAndBeforeOr(temp_formula))
 	{
-		cnf = buildTree2(temp_formula);
-		//std::cout << std::endl;
-		//printTree2(cnf.get(), true);
+		cnf = buildTree(temp_formula);
 		cnf = applyDistributiveLaw(cnf);
-		//printTree2(cnf.get(), true);
+		//std::cout << std::endl;
+		//printTree(cnf.get(), true);
 		result = postorder(cnf);
 	}
 	else

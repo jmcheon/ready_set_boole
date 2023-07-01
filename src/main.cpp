@@ -1,5 +1,3 @@
-#include "ReadySetBoole.hpp"
-#include "RPNtree.hpp"
 #include "exercise.hpp"
 
 void	executeExercises(int argc, char** argv)

@@ -1,5 +1,4 @@
 #include "ReadySetBoole.hpp"
-#include "RPNtree.hpp"
 #include "exercise.hpp"
 
 static bool	parseFormula(const std::string& formula)
