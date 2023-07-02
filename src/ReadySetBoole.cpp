@@ -151,14 +151,9 @@ void	RSB::printTruthTable(const std::string& formula, bool ordered)
 	size_t rows = 0;
 
 
-	//checkFormula(formula);
 	if (!checkFormula(formula, true, false))
 		return ;
 	variables = getVariables(formula, ordered);
-	/*
-	for (auto it = variables.begin(); it != variables.end(); ++it)
-		std::cout << it->first << ", " << it->second << std::endl;
-	*/
 	variable_count = std::max_element(variables.begin(), variables.end(),
 	[](const std::pair<char, size_t>& lhs, const std::pair<char, size_t>& rhs) {
 	    return lhs.second < rhs.second;
@@ -282,7 +277,6 @@ const std::string	RSB::negationNormalForm(const std::string& formula)
 	std::stack<std::string> stack;
 	std::string temp, temp2, temp_formula;
 
-	//checkFormula(formula);
 	if (!checkFormula(formula, true, false))
 		return formula;
 	temp_formula = simplifyForm(formula);
@@ -380,7 +374,6 @@ const std::string	RSB::conjunctiveNormalForm(const std::string& formula)
 	std::string temp_formula;
 	std::string result;
 
-	//checkFormula(formula);
 	if (!checkFormula(formula, true, false))
 		return formula;
 	temp_formula = negationNormalForm(formula);
@@ -404,13 +397,17 @@ bool	RSB::sat(const std::string& formula)
 {
 	std::vector<std::pair<char, size_t> > variables;
 	std::string temp_formula = formula;
+	size_t variable_count = 0;
 	size_t rows = 0;
 
-	//checkFormula(formula);
 	if (!checkFormula(formula, true, false))
 		return false;
 	variables = getVariables(formula, false);
-	rows = 1 << variables.back().second;
+	variable_count = std::max_element(variables.begin(), variables.end(),
+	[](const std::pair<char, size_t>& lhs, const std::pair<char, size_t>& rhs) {
+	    return lhs.second < rhs.second;
+	})->second;
+	rows = 1 << variable_count;
 
 	for (size_t i = 0; i < rows; ++i)
 	{
@@ -554,4 +551,32 @@ t_set	RSB::evalSet(const std::string& formula, const t_powerset& sets)
 		}
 	}
 	return stack.top();
+};
+
+// ex10 Curve
+double	RSB::map(unsigned short x, unsigned short y)
+{
+	// combine x and y into a 64-bit value
+	unsigned long long value = (static_cast<unsigned long long>(x) << 16) | y;
+	// map the value to the range [0; 1]
+    double result = static_cast<double>(value) / MAX_VALUE;
+
+    return result;
+};
+
+// ex11 Inverse function
+t_vec2s	RSB::reverseMap(double n)
+{
+	// reverse normalize the value
+    unsigned long long value = static_cast<unsigned long long>(n * MAX_VALUE);
+	// extract the x coordinate
+    unsigned short x = static_cast<unsigned short>(value >> 16);
+	// extract the y coordinate
+    unsigned short y = static_cast<unsigned short>(value & 0xFFFF);
+	
+	t_vec2s result;
+	result.x = x;
+	result.y = y;
+	
+	return result;
 };

@@ -2,11 +2,16 @@
 #define READYSETBOOLE_HPP
 #include <stack>
 #include <algorithm>
+#include <sstream>
 #include <unordered_map>
 #include <functional>
 #include <unordered_set>
-#include "Tokenizer.hpp"
 #include "RPNtree.hpp"
+
+// Maximum value for unsigned short (2^16 - 1) in 64-bit
+//const unsigned long long MAX_VALUE = (1ULL << 32) - 1;
+#define MAX_VALUE ((1ULL << 32) - 1)
+
 
 typedef std::vector<int> t_set;
 typedef std::vector<std::vector<int> > t_powerset;

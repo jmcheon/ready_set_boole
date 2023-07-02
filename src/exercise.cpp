@@ -1,5 +1,10 @@
 #include "exercise.hpp"
 
+std::ostream&	operator<<(std::ostream& cout, const t_vec2s& tuple)
+{
+	return cout << "( " << tuple.x << ", " << tuple.y << " )";
+}
+
 void	ex00(int argc, char** argv)
 {
 	std::cout << "Running ex00 - adder..." << std::endl;
@@ -242,14 +247,30 @@ void	ex09(int argc, char** argv)
 	std::cout << GREEN << rsb.evalSet(formula, sets) << FIN << std::endl;
 }
 
-void	ex10(int argc, char** argv)
+void	ex10_11(int argc, char** argv)
 {
-	std::cout << "Running ex10 - curve..." << std::endl;
-	(void)argc; (void)argv;
-}
+	std::cout << "Running ex10, ex11 - curve & inverse function..." << std::endl;
+	RSB		rsb;
+	t_vec2s	input;
+	t_vec2s	reversed;
+	double	n;
 
-void	ex11(int argc, char** argv)
-{
-	std::cout << "Running ex11 - inverse function..." << std::endl;
-	(void)argc; (void)argv;
+	if (argc == 4)
+	{
+		input.x = std::atoi(argv[2]);
+		input.y = std::atoi(argv[3]);
+
+		std::cout << "( " << argv[2] << ", " << argv[3] << " )" << std::endl;
+
+		n = rsb.map(input.x, input.y);
+		reversed = rsb.reverseMap(n);
+		if (n >=0 && n <=1)
+			std::cout << GREEN << "range:   " << n << FIN << std::endl;
+		else
+			std::cout << RED << "range: " << n << " NOT OK" << FIN << std::endl;
+		if (reversed.x == input.x && reversed.y == input.y)
+			std::cout << GREEN << "reverse: " << reversed << FIN << std::endl;
+		else
+			std::cout << RED << "reverse: " << reversed << " NOT OK" << FIN << std::endl;
+	}
 }
