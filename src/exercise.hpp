@@ -14,7 +14,7 @@
 # define ORANGE "\033[38;5;202m"
 # define FIN "\033[0m"
 
-# define MAX_EXERCISE_NUM 10
+# define MAX_EXERCISE_NUM 11
 
 void	ex00(int argc, char** argv);
 void	ex01(int argc, char** argv);
