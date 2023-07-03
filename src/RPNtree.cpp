@@ -96,38 +96,72 @@ std::string	inorder(std::unique_ptr<RPNNode>& root)
 
 std::unique_ptr<RPNNode> distribute(std::unique_ptr<RPNNode>& a, std::unique_ptr<RPNNode>& b, std::unique_ptr<RPNNode>& c)
 {
-    auto new_root = std::make_unique<RPNNode>('&');
+	std::cout << "a:" << a->getValue() << std::endl;
+	std::cout << "b:" << b->getValue() << std::endl;
+	std::cout << "c:" << c->getValue() << std::endl;
+    std::unique_ptr<RPNNode> new_root = std::make_unique<RPNNode>('&');
     new_root->m_left = std::make_unique<RPNNode>('|', a->clone(), std::move(b));
     new_root->m_right = std::make_unique<RPNNode>('|', a->clone(), std::move(c));
+	std::cout << "new:" << new_root->getValue() << std::endl;
     return new_root;
 }
 
 bool isDistributable(const std::unique_ptr<RPNNode>& root)
 {
     if (!root)
-        return false;
+		return false;
+	/*
+	if (root->m_left)
+		std::cout << "left:" << root->m_left->getValue() << std::endl;
+	if (root->m_right)
+		std::cout << "right:" << root->m_right->getValue() << std::endl;
+	*/
     return (root->getValue() == '|' && ((root->m_left && root->m_left->getValue() == '&') || (root->m_right && root->m_right->getValue() == '&')));
 }
 
 std::unique_ptr<RPNNode> applyDistributiveLaw(std::unique_ptr<RPNNode>& root)
 {
     if (!root)
-        return nullptr;
-
-    root->m_left = applyDistributiveLaw(root->m_left);
-    root->m_right = applyDistributiveLaw(root->m_right);
+		return nullptr;
+	if (root->m_left)
+		root->m_left = applyDistributiveLaw(root->m_left);
+	if (root->m_right)
+		root->m_right = applyDistributiveLaw(root->m_right);
 
     if (isDistributable(root)) {
         std::unique_ptr<RPNNode> a, b, c;
 
+		std::cout << "value:" << root->getValue() << std::endl;
+		if (root->m_right)
+			std::cout << "right:" << root->m_right->getValue() << std::endl;
         if (root->m_left && root->m_left->getValue() == '&') {
+				std::cout << "1left:" << root->m_left->getValue() << std::endl;
 			    a = std::move(root->m_right);
+				//std::cout << "right:" << root->m_right->getValue() << std::endl;
 			    b = std::move(root->m_left->m_left);
 			    c = std::move(root->m_left->m_right);
         } else if (root->m_right && root->m_right->getValue() == '&') {
-			    a = std::move(root->m_right);
-			    b = std::move(root->m_left->m_left);
-			    c = std::move(root->m_left->m_right);
+				std::cout << "2left:" << root->m_left->getValue() << std::endl;
+				std::cout << "2right:" << root->m_right->getValue() << std::endl;
+				if (isupper(root->m_right->getValue()))
+			    	a = std::move(root->m_right);
+				else
+			    	a = std::move(root->m_right->m_right);
+				if (root->m_left->m_left)
+				{
+					std::cout << "2left-left:" << root->m_left->m_left->getValue() << std::endl;
+			    	b = std::move(root->m_left->m_left);
+				}
+				else
+				{
+					std::cout << "2left:" << root->m_left->getValue() << std::endl;
+			    	//b = std::move(root->m_left);
+					b = root->m_left->clone();
+				}
+				if (root->m_left->m_right)
+			    	c = std::move(root->m_left->m_right);
+				else
+					c = root->m_right->m_left->clone();
 				/*
         } else if (root->m_left && root->m_left->getValue() == '|') {
 			    a = std::move(root->m_right);
@@ -141,8 +175,12 @@ std::unique_ptr<RPNNode> applyDistributiveLaw(std::unique_ptr<RPNNode>& root)
         }
 
         root = distribute(a, b, c);
-        root->m_left = applyDistributiveLaw(root->m_left);
-        root->m_right = applyDistributiveLaw(root->m_right);
+		printTree(root.get(), true);
+		std::cout << postorder(root) << std::endl;
+		if (root->m_left)
+			root->m_left = applyDistributiveLaw(root->m_left);
+		if (root->m_right)
+			root->m_right = applyDistributiveLaw(root->m_right);
     }
 
     return std::move(root);

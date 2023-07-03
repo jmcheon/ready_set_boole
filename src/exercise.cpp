@@ -85,7 +85,7 @@ void	ex04(int argc, char** argv)
 	}
 	else
 	{
-		if (!checkFormula(formula))
+		if (!checkFormula(formula, true, false))
 			return ;
 		rsb.printTruthTable(formula, ordered);
 	}
@@ -138,7 +138,10 @@ void	ex06(int argc, char** argv)
 		if (!checkFormula(formula))
 			return ;
 		//formula = "A!BC!||AB!C!||A!B!C!||&&";
-		std::cout << formula << " -> " << GREEN << rsb.conjunctiveNormalForm(formula) << FIN << std::endl;
+		if (argc == 4)
+			std::cout << rsb.conjunctiveNormalForm(formula) << std::endl;
+		else
+			std::cout << formula << " -> " << GREEN << rsb.conjunctiveNormalForm(formula) << FIN << std::endl;
 	}
 }
 

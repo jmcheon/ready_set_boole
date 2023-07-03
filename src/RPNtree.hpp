@@ -14,8 +14,8 @@ class RPNNode
 	    std::unique_ptr<RPNNode>	m_left;
 	    std::unique_ptr<RPNNode>	m_right;
 
-		RPNNode(const char& value, std::unique_ptr<RPNNode> left, std::unique_ptr<RPNNode> right) : m_value(value), m_left(std::move(left)), m_right(std::move(right)) {}
-		explicit RPNNode(const char& value) : m_value(value), m_left(nullptr), m_right(nullptr) { }
+		RPNNode(char value, std::unique_ptr<RPNNode> left, std::unique_ptr<RPNNode> right) : m_value(value), m_left(std::move(left)), m_right(std::move(right)) {}
+		RPNNode(char value) : m_value(value), m_left(nullptr), m_right(nullptr) { }
 
 		std::unique_ptr<RPNNode> clone()
 		{
