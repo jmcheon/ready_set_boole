@@ -378,13 +378,16 @@ const std::string	RSB::conjunctiveNormalForm(const std::string& formula)
 		return formula;
 	temp_formula = negationNormalForm(formula);
 	temp_formula = rearrangeOnlyAndOr(temp_formula);
+	std::cout << temp_formula << std::endl;
+	cnf = buildTree(temp_formula);
+	printTree(cnf.get(), true);
 	if (checkAndBeforeOr(temp_formula))
 	{
 		cnf = buildTree(temp_formula);
 		cnf = applyDistributiveLaw(cnf);
 		//std::cout << std::endl;
 		//printTree(cnf.get(), true);
-		result = postorder(cnf);
+		result = preorder(cnf);
 	}
 	else
 		result = temp_formula;
