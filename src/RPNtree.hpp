@@ -95,7 +95,7 @@ class RPNNode
 
 std::unique_ptr<RPNNode>	buildTree(const std::string& formula, bool variable = true);
 std::unique_ptr<RPNNode>	applyDistributiveLaw(std::unique_ptr<RPNNode>& root);
-std::unique_ptr<RPNNode>	applyConjunctionRearrange(std::unique_ptr<RPNNode>& root);
+std::unique_ptr<RPNNode>	rearrangeConjunctions(std::unique_ptr<RPNNode>& root);
 std::string					preorder(std::unique_ptr<RPNNode>& root);
 std::string					inorder(std::unique_ptr<RPNNode>& root);
 std::string					postorder(std::unique_ptr<RPNNode>& root);

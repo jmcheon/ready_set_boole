@@ -375,15 +375,9 @@ const std::string	RSB::conjunctiveNormalForm(const std::string& formula)
 
 	cnf = buildTree(temp_formula);
 	if (checkAndBeforeOr(temp_formula))
-	{
 		cnf = applyDistributiveLaw(cnf);
-		result = preorder(cnf);
-	}
-	else
-		result = temp_formula;
-	cnf = applyConjunctionRearrange(cnf);
-	if (cnf != nullptr)
-		result = preorder(cnf);
+	cnf = rearrangeConjunctions(cnf);
+	result = preorder(cnf);
 
 	return result;
 };

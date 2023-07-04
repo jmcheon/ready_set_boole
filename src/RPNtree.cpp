@@ -153,16 +153,16 @@ static bool	isDistributable(const std::unique_ptr<RPNNode>& root)
 	return (root->getValue() == '|' && ((root->m_left && root->m_left->getValue() == '&') || (root->m_right && root->m_right->getValue() == '&')));
 }
 
-std::unique_ptr<RPNNode> applyConjunctionRearrange(std::unique_ptr<RPNNode>& root)
+std::unique_ptr<RPNNode> rearrangeConjunctions(std::unique_ptr<RPNNode>& root)
 {
 	RPNNode* temp;
 
 	if (!root)
 		return nullptr;
 	if (root->m_left)
-		root->m_left = applyConjunctionRearrange(root->m_left);
+		root->m_left = rearrangeConjunctions(root->m_left);
 	if (root->m_right)
-		root->m_right = applyConjunctionRearrange(root->m_right);
+		root->m_right = rearrangeConjunctions(root->m_right);
 	if (root->getValue() == '&' && root->m_right && root->m_right->getValue() == '&')
 	{
 		temp = root->m_right.get();
