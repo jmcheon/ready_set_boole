@@ -92,7 +92,7 @@ elif [ $# -eq 1 ]; then
 
 elif [ $# -eq 2 ]; then
 	if [ "$2" = "print" ]; then
-		run_or_make "$program" "$exercise" "$1" "$2" >> "$output_file"
+		run_or_make "$program" "$exercise" "$1" "$2" > "$output_file"
 		print_table="true"
 	fi
 else

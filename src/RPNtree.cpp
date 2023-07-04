@@ -146,13 +146,6 @@ std::unique_ptr<RPNNode> distribute(std::unique_ptr<RPNNode>& a, std::unique_ptr
 	return new_root;
 }
 
-static bool	isOperator(const char& op)
-{
-	if (op == '&' || op == '|')
-		return true;
-	return false;
-}
-
 static bool	isDistributable(const std::unique_ptr<RPNNode>& root)
 {
 	if (!root)
@@ -162,27 +155,28 @@ static bool	isDistributable(const std::unique_ptr<RPNNode>& root)
 
 std::unique_ptr<RPNNode> applyConjunctionRearrange(std::unique_ptr<RPNNode>& root)
 {
-	RPNNode* a;
-	RPNNode* b;
-	RPNNode* c;
+	RPNNode* temp;
 
 	if (!root)
 		return nullptr;
+	if (root->m_left)
+		root->m_left = applyConjunctionRearrange(root->m_left);
+	if (root->m_right)
+		root->m_right = applyConjunctionRearrange(root->m_right);
 	if (root->getValue() == '&' && root->m_right && root->m_right->getValue() == '&')
 	{
-		a = root->m_right.get();
-		b = root->m_right.get();
-		c = root->m_left.get();
-		while (b->m_left->getValue() == '&')
-			b = b->m_left.get();
+		temp = root->m_right.get();
+		while (temp->m_left->getValue() == '&')
+			temp = temp->m_left.get();
 
 		std::unique_ptr<RPNNode> new_root = std::make_unique<RPNNode>('&');
-		new_root->m_left = std::make_unique<RPNNode>(*c);
-		new_root->m_right = std::make_unique<RPNNode>(*b->m_left);
-		b->m_left = std::move(new_root);
-		return std::make_unique<RPNNode>(*a);
+		new_root->m_left = std::move(root->m_left);
+		new_root->m_right = std::make_unique<RPNNode>(*temp->m_left);
+		temp->m_left = std::move(new_root);
+		//printTree(a, true);
+		return std::move(root->m_right);
 	}
-	return nullptr;
+	return std::move(root);
 }
 
 std::unique_ptr<RPNNode> applyDistributiveLaw(std::unique_ptr<RPNNode>& root)
@@ -210,20 +204,9 @@ std::unique_ptr<RPNNode> applyDistributiveLaw(std::unique_ptr<RPNNode>& root)
 		else if (root->m_left && root->m_left->getValue() == '&')
 		{
 			left = true;
-			if (!isOperator(root->m_right->getValue()))
-				a = std::move(root->m_right);
-			else
-				a = std::move(root->m_right->m_right);
-
-			if (root->m_left->m_left)
-				b = std::move(root->m_left->m_left);
-			else
-				b = root->m_left->clone();
-
-			if (root->m_left->m_right)
-				c = std::move(root->m_left->m_right);
-			else
-				c = root->m_right->m_left->clone();
+			a = std::move(root->m_right);
+			b = std::move(root->m_left->m_left);
+			c = std::move(root->m_left->m_right);
 		}
 		else if (root->m_right && root->m_right->getValue() == '&')
 		{
