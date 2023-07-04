@@ -19,17 +19,17 @@
 class RPNNode
 {
 	private:
-	    char					m_value;
+		char					m_value;
 	public:
-	    std::unique_ptr<RPNNode>	m_left;
-	    std::unique_ptr<RPNNode>	m_right;
-	    std::unique_ptr<RPNNode>	m_parent;
+		std::unique_ptr<RPNNode>	m_left;
+		std::unique_ptr<RPNNode>	m_right;
+		std::unique_ptr<RPNNode>	m_parent;
 
 		RPNNode(char value, std::unique_ptr<RPNNode> left, std::unique_ptr<RPNNode> right, std::unique_ptr<RPNNode> parent) 
-		: m_value(value), m_left(std::move(left)), m_right(std::move(right)), m_parent(std::move(parent)) {}
+			: m_value(value), m_left(std::move(left)), m_right(std::move(right)), m_parent(std::move(parent)) {}
 
 		RPNNode(char value, std::unique_ptr<RPNNode> left, std::unique_ptr<RPNNode> right)
-		: m_value(value), m_left(std::move(left)), m_right(std::move(right))
+			: m_value(value), m_left(std::move(left)), m_right(std::move(right))
 		{
 			if (m_left)
 				m_left->m_parent = std::unique_ptr<RPNNode>(this);
@@ -41,12 +41,10 @@ class RPNNode
 		RPNNode(char value, std::unique_ptr<RPNNode> parent) : m_value(value), m_parent(std::move(parent)) { }
 		RPNNode(const RPNNode& other) : m_value(other.m_value)
 		{
-		    if (other.m_left) {
-		        m_left = std::make_unique<RPNNode>(*other.m_left);
-		    }
-		    if (other.m_right) {
-		        m_right = std::make_unique<RPNNode>(*other.m_right);
-		    }
+			if (other.m_left)
+				m_left = std::make_unique<RPNNode>(*other.m_left);
+			if (other.m_right)
+				m_right = std::make_unique<RPNNode>(*other.m_right);
 		}
 
 		std::unique_ptr<RPNNode> clone()
@@ -54,16 +52,16 @@ class RPNNode
 			std::unique_ptr<RPNNode> new_node = std::make_unique<RPNNode>(m_value, nullptr);
 
 			if (m_left)
-			    new_node->m_left = (m_left->clone());
+				new_node->m_left = (m_left->clone());
 			if (m_right)
-			    new_node->m_right = (m_right->clone());
+				new_node->m_right = (m_right->clone());
 			return new_node;
-    	}
+		}
 
 		std::shared_ptr<RPNNode> getSharedNodePtr()
 		{
 			std::unique_ptr<RPNNode> temp = std::make_unique<RPNNode>(*this);
-        	return std::shared_ptr<RPNNode>(std::move(temp));
+			return std::shared_ptr<RPNNode>(std::move(temp));
 		}
 
 		char				getValue() const { return m_value; }
@@ -85,9 +83,9 @@ class RPNNode
 		}
 		void			print() const
 		{
-    	    if (m_left)
+			if (m_left)
 				m_left->print();
-    	    if (m_right)
+			if (m_right)
 				m_right->print();
 			std::cout << m_value;
 		}

@@ -64,17 +64,17 @@ void	ex03(int argc, char** argv)
 	RSB			rsb;
 
 	if (argc >= 3)
- 		formula = (std::string)argv[2];
+		formula = (std::string)argv[2];
 	if (formula.empty())
 	{
 		std::cout << "10& -> " << GREEN << rsb.evalFormula("10&") << FIN << std::endl;     // false
-   		std::cout << "10| -> " << GREEN << rsb.evalFormula("10|") << FIN << std::endl;     // true
-   		std::cout << "11> -> " << GREEN << rsb.evalFormula("11>") << FIN << std::endl;     // true
-   		std::cout << "10= -> " << GREEN << rsb.evalFormula("10=") << FIN << std::endl;     // false
-   		std::cout << "1011||= -> " << GREEN << rsb.evalFormula("1011||=") << FIN << std::endl; // true
+		std::cout << "10| -> " << GREEN << rsb.evalFormula("10|") << FIN << std::endl;     // true
+		std::cout << "11> -> " << GREEN << rsb.evalFormula("11>") << FIN << std::endl;     // true
+		std::cout << "10= -> " << GREEN << rsb.evalFormula("10=") << FIN << std::endl;     // false
+		std::cout << "1011||= -> " << GREEN << rsb.evalFormula("1011||=") << FIN << std::endl; // true
 	}
 	else
-   		std::cout << formula << " -> " << GREEN << rsb.evalFormula(formula) << FIN << std::endl;
+		std::cout << formula << " -> " << GREEN << rsb.evalFormula(formula) << FIN << std::endl;
 }
 
 void	ex04(int argc, char** argv)
@@ -85,7 +85,7 @@ void	ex04(int argc, char** argv)
 	bool		ordered = false;
 
 	if (argc >= 3)
- 		formula = (std::string)argv[2];
+		formula = (std::string)argv[2];
 	if (argc == 4)
 		ordered = argv[3];
 	if (formula.empty())
@@ -108,7 +108,7 @@ void	ex05(int argc, char** argv)
 	RSB			rsb;
 
 	if (argc >= 3)
- 		formula = (std::string)argv[2];
+		formula = (std::string)argv[2];
 	if (formula.empty())
 	{
 		std::cout << "AB&! -> " << GREEN << rsb.negationNormalForm("AB&!") << FIN << std::endl;
@@ -136,7 +136,7 @@ void	ex06(int argc, char** argv)
 	RSB			rsb;
 
 	if (argc >= 3)
- 		formula = (std::string)argv[2];
+		formula = (std::string)argv[2];
 	if (formula.empty())
 	{
 		std::cout << "AB&! -> " << GREEN << rsb.conjunctiveNormalForm("AB&!") << FIN << std::endl; // A!B!|
@@ -166,7 +166,7 @@ void	ex07(int argc, char** argv)
 	RSB			rsb;
 
 	if (argc >= 3)
- 		formula = (std::string)argv[2];
+		formula = (std::string)argv[2];
 	if (formula.empty())
 	{
 		std::cout << "AB| -> " << GREEN << rsb.sat("AB|") << FIN << std::endl; // true

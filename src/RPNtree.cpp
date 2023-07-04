@@ -3,36 +3,37 @@
 bool	checkFormula(const std::string& formula, bool variable, bool print)
 {
 	std::unique_ptr<RPNNode> rpn;
+
 	try
 	{
- 		rpn = buildTree(formula, variable);
+		rpn = buildTree(formula, variable);
 		if (print)
 		{
 			std::cout << "formula: ";
 			std::cout << preorder(rpn) << std::endl;
-        	//printNode(rpn.get());
-        	printTree(rpn.get(), true);
+			//printNode(rpn.get());
+			//printTree(rpn.get(), true);
 			std::cout << std::endl;
 		}
-    }
+	}
 	catch (const std::runtime_error& e)
 	{
-        std::cerr << "Error: " << e.what() << std::endl;
+		std::cerr << "Error: " << e.what() << std::endl;
 		return false;
-    }
+	}
 	return true;
 }
 
 std::unique_ptr<RPNNode> buildTree(const std::string& formula, bool variable)
 {
 	std::stack<std::unique_ptr<RPNNode> > stack;
-	
+
 	for (char c : formula)
 	{
 		if ((c >= 'A' && c <= 'Z') || (c == '1' || c == '0'))
 		{
 			if ((variable && !(c >= 'A' && c <= 'Z'))
-				|| (!variable && !(c == '1' || c == '0')))
+					|| (!variable && !(c == '1' || c == '0')))
 				runtimeException("Invalid formula: Unexpected symbol");
 			std::unique_ptr<RPNNode> new_node = std::make_unique<RPNNode>(c);
 			stack.push(std::move(new_node));
@@ -58,7 +59,7 @@ std::unique_ptr<RPNNode> buildTree(const std::string& formula, bool variable)
 			stack.pop();
 			new_node->m_right = std::move(stack.top());
 			stack.pop();
-			
+
 			new_node->m_left->m_parent = new_node->clone();
 			new_node->m_right->m_parent = new_node->clone();
 
@@ -76,12 +77,12 @@ std::string	preorder(std::unique_ptr<RPNNode>& root)
 {
 	std::string output;
 
-    if (root == nullptr)
-        return output;
+	if (root == nullptr)
+		return output;
 
-    output += preorder(root->m_right);
-    output += preorder(root->m_left);
-    output += root->getValue();
+	output += preorder(root->m_right);
+	output += preorder(root->m_left);
+	output += root->getValue();
 	return output;
 }
 
@@ -89,12 +90,12 @@ std::string	postorder(std::unique_ptr<RPNNode>& root)
 {
 	std::string output;
 
-    if (root == nullptr)
-        return output;
+	if (root == nullptr)
+		return output;
 
-    output += postorder(root->m_left);
-    output += postorder(root->m_right);
-    output += root->getValue();
+	output += postorder(root->m_left);
+	output += postorder(root->m_right);
+	output += root->getValue();
 	return output;
 }
 
@@ -104,11 +105,11 @@ std::string	inorder(std::unique_ptr<RPNNode>& root)
 
 	if (!root)
 		return output;
-	
+
 	if (isupper(root->getValue()))
 		output += root->getValue();
 	output += inorder(root->m_left);
-	
+
 	if (!isupper(root->getValue()))
 		output += root->getValue();
 	output += inorder(root->m_right);
@@ -117,32 +118,32 @@ std::string	inorder(std::unique_ptr<RPNNode>& root)
 
 std::unique_ptr<RPNNode> distribute(std::unique_ptr<RPNNode>& a, std::unique_ptr<RPNNode>& b, std::unique_ptr<RPNNode>& c, std::unique_ptr<RPNNode>& d, bool left)
 {
-    std::unique_ptr<RPNNode> new_root = std::make_unique<RPNNode>('&');
+	std::unique_ptr<RPNNode> new_root = std::make_unique<RPNNode>('&');
 
 	if (d)
 	{
-    	std::unique_ptr<RPNNode> temp1 = std::make_unique<RPNNode>('&');
-    	std::unique_ptr<RPNNode> temp2 = std::make_unique<RPNNode>('&');
+		std::unique_ptr<RPNNode> temp1 = std::make_unique<RPNNode>('&');
+		std::unique_ptr<RPNNode> temp2 = std::make_unique<RPNNode>('&');
 
-    	temp1->m_left = std::make_unique<RPNNode>('|', a->clone(), c->clone(), new_root->clone());
-    	temp1->m_right = std::make_unique<RPNNode>('|', a->clone(), d->clone(), new_root->clone());
-    	temp2->m_left = std::move(temp1);
-    	temp2->m_right = std::make_unique<RPNNode>('|', b->clone(), d->clone(), new_root->clone());
+		temp1->m_left = std::make_unique<RPNNode>('|', a->clone(), c->clone(), new_root->clone());
+		temp1->m_right = std::make_unique<RPNNode>('|', a->clone(), d->clone(), new_root->clone());
+		temp2->m_left = std::move(temp1);
+		temp2->m_right = std::make_unique<RPNNode>('|', b->clone(), d->clone(), new_root->clone());
 
 		new_root->m_left = std::move(temp2);
 		new_root->m_right = std::make_unique<RPNNode>('|', b->clone(), c->clone(), new_root->clone());
 	}
 	else if (left)
 	{
-    	new_root->m_left = std::make_unique<RPNNode>('|', std::move(b), a->clone(), new_root->clone());
-    	new_root->m_right = std::make_unique<RPNNode>('|', std::move(c), a->clone(), new_root->clone());
+		new_root->m_left = std::make_unique<RPNNode>('|', std::move(b), a->clone(), new_root->clone());
+		new_root->m_right = std::make_unique<RPNNode>('|', std::move(c), a->clone(), new_root->clone());
 	}
 	else
 	{
-    	new_root->m_left = std::make_unique<RPNNode>('|', a->clone(), std::move(b), new_root->clone());
-    	new_root->m_right = std::make_unique<RPNNode>('|', a->clone(), std::move(c), new_root->clone());
+		new_root->m_left = std::make_unique<RPNNode>('|', a->clone(), std::move(b), new_root->clone());
+		new_root->m_right = std::make_unique<RPNNode>('|', a->clone(), std::move(c), new_root->clone());
 	}
-    return new_root;
+	return new_root;
 }
 
 static bool	isOperator(const char& op)
@@ -154,9 +155,9 @@ static bool	isOperator(const char& op)
 
 static bool	isDistributable(const std::unique_ptr<RPNNode>& root)
 {
-    if (!root)
+	if (!root)
 		return false;
-    return (root->getValue() == '|' && ((root->m_left && root->m_left->getValue() == '&') || (root->m_right && root->m_right->getValue() == '&')));
+	return (root->getValue() == '|' && ((root->m_left && root->m_left->getValue() == '&') || (root->m_right && root->m_right->getValue() == '&')));
 }
 
 std::unique_ptr<RPNNode> applyConjunctionRearrange(std::unique_ptr<RPNNode>& root)
@@ -164,7 +165,9 @@ std::unique_ptr<RPNNode> applyConjunctionRearrange(std::unique_ptr<RPNNode>& roo
 	RPNNode* a;
 	RPNNode* b;
 	RPNNode* c;
-	
+
+	if (!root)
+		return nullptr;
 	if (root->getValue() == '&' && root->m_right && root->m_right->getValue() == '&')
 	{
 		a = root->m_right.get();
@@ -173,12 +176,12 @@ std::unique_ptr<RPNNode> applyConjunctionRearrange(std::unique_ptr<RPNNode>& roo
 		while (b->m_left->getValue() == '&')
 			b = b->m_left.get();
 
-    	std::unique_ptr<RPNNode> new_root = std::make_unique<RPNNode>('&');
-    	new_root->m_left = std::make_unique<RPNNode>(*c);
-    	new_root->m_right = std::make_unique<RPNNode>(*b->m_left);
+		std::unique_ptr<RPNNode> new_root = std::make_unique<RPNNode>('&');
+		new_root->m_left = std::make_unique<RPNNode>(*c);
+		new_root->m_right = std::make_unique<RPNNode>(*b->m_left);
 		b->m_left = std::move(new_root);
-    	return std::make_unique<RPNNode>(*a);
-    }
+		return std::make_unique<RPNNode>(*a);
+	}
 	return nullptr;
 }
 
@@ -186,68 +189,64 @@ std::unique_ptr<RPNNode> applyDistributiveLaw(std::unique_ptr<RPNNode>& root)
 {
 	bool	left = false;
 
-    if (!root)
+	if (!root)
 		return nullptr;
 	if (root->m_right)
 		root->m_right = applyDistributiveLaw(root->m_right);
 	if (root->m_left)
 		root->m_left = applyDistributiveLaw(root->m_left);
 
-    if (isDistributable(root)) {
-        std::unique_ptr<RPNNode> a, b, c, d;
+	if (isDistributable(root)) {
+		std::unique_ptr<RPNNode> a, b, c, d;
 
-        if ((root->m_left && root->m_left->getValue() == '&') 
-			&& (root->m_right && root->m_right->getValue() == '&'))
+		if ((root->m_left && root->m_left->getValue() == '&') 
+				&& (root->m_right && root->m_right->getValue() == '&'))
 		{
 			a = std::move(root->m_right->m_right);
 			b = std::move(root->m_right->m_left);
 			c = std::move(root->m_left->m_right);
 			d = std::move(root->m_left->m_left);
 		}
-        else if (root->m_left && root->m_left->getValue() == '&')
+		else if (root->m_left && root->m_left->getValue() == '&')
 		{
 			left = true;
 			if (!isOperator(root->m_right->getValue()))
-		    	a = std::move(root->m_right);
+				a = std::move(root->m_right);
 			else
-		    	a = std::move(root->m_right->m_right);
+				a = std::move(root->m_right->m_right);
 
 			if (root->m_left->m_left)
-		    	b = std::move(root->m_left->m_left);
+				b = std::move(root->m_left->m_left);
 			else
 				b = root->m_left->clone();
 
 			if (root->m_left->m_right)
-		    	c = std::move(root->m_left->m_right);
+				c = std::move(root->m_left->m_right);
 			else
 				c = root->m_right->m_left->clone();
-        }
+		}
 		else if (root->m_right && root->m_right->getValue() == '&')
 		{
-		    a = std::move(root->m_left);
-		    b = std::move(root->m_right->m_left);
-		    c = std::move(root->m_right->m_right);
-        }
+			a = std::move(root->m_left);
+			b = std::move(root->m_right->m_left);
+			c = std::move(root->m_right->m_right);
+		}
 		else
 		{
 			a = std::move(root->m_left);
 			b = std::move(root->m_right->m_left);
 			c = std::move(root->m_right->m_right);
-        }
-
-        root = distribute(a, b, c, d, left);
+		}
+		root = distribute(a, b, c, d, left);
 		//printTree(root.get(), true);
 		//std::cout << postorder(root) << std::endl;
 		//std::cout << BLUE << preorder(root) << FIN << std::endl;
-		
 		if (root->m_left)
 			root->m_left = applyDistributiveLaw(root->m_left);
 		if (root->m_right)
 			root->m_right = applyDistributiveLaw(root->m_right);
-			
-    }
-
-    return std::move(root);
+	}
+	return std::move(root);
 }
 
 void	printNode(const RPNNode* node)
@@ -259,36 +258,36 @@ void	printNode(const RPNNode* node)
 
 void	printTreeLeftview(const std::string& prefix, const RPNNode* node, bool is_left)
 {
-    if( node != nullptr )
-    {
-        std::cout << prefix;
-        std::cout << (is_left ? "└─" : "├─" );
+	if( node != nullptr )
+	{
+		std::cout << prefix;
+		std::cout << (is_left ? "└─" : "├─" );
 
 		node->traverse();
-    	std::cout << std::endl;
-        printTreeLeftview(prefix + (is_left ? "   " : "│  "), node->getRight(), false);
-        printTreeLeftview(prefix + (is_left ? "   " : "│  "), node->getLeft(), true);
-    }
+		std::cout << std::endl;
+		printTreeLeftview(prefix + (is_left ? "   " : "│  "), node->getRight(), false);
+		printTreeLeftview(prefix + (is_left ? "   " : "│  "), node->getLeft(), true);
+	}
 }
 
 void	printTreeRightview(const std::string& prefix, const RPNNode* node, bool is_left)
 {
-    if( node != nullptr )
-    {
-        std::cout << prefix;
-        std::cout << (is_left ? "├─" : "└─" );
+	if( node != nullptr )
+	{
+		std::cout << prefix;
+		std::cout << (is_left ? "├─" : "└─" );
 
 		node->traverse();
-    	std::cout << std::endl;
-        printTreeRightview(prefix + (is_left ? "│  " : "   "), node->getLeft(), true);
-        printTreeRightview(prefix + (is_left ? "│  " : "   "), node->getRight(), false);
-    }
+		std::cout << std::endl;
+		printTreeRightview(prefix + (is_left ? "│  " : "   "), node->getLeft(), true);
+		printTreeRightview(prefix + (is_left ? "│  " : "   "), node->getRight(), false);
+	}
 }
 
 void	printTree(const RPNNode* node, bool leftview)
 {
 	if (leftview)
-    	printTreeLeftview("", node, true);
+		printTreeLeftview("", node, true);
 	else
-    	printTreeRightview("", node, false);
+		printTreeRightview("", node, false);
 }
