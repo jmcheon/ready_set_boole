@@ -122,7 +122,10 @@ void	ex05(int argc, char** argv)
 	{
 		if (!checkFormula(formula))
 			return ;
-		std::cout << formula << " -> " << GREEN << rsb.negationNormalForm(formula) << FIN << std::endl;
+		if (argc == 4)
+			std::cout << rsb.negationNormalForm(formula) << std::endl;
+		else
+			std::cout << formula << " -> " << GREEN << rsb.negationNormalForm(formula) << FIN << std::endl;
 	}
 }
 
@@ -231,7 +234,7 @@ static bool	checkSets(const std::string& formula, const t_powerset sets, std::ve
 			}
 		}
 	}
-	if (sets.size() != variable_count)
+	if (sets.size() < variable_count)
 	{
 		std::cout << RED << "Error: Sets size and variable numbers don't match." << FIN << std::endl;
 		return false;

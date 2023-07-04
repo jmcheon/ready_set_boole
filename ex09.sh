@@ -7,8 +7,26 @@ program="./rsb"
 make all
 if [ $# -eq 0 ]; then
 	"$program" "$exercise" "A" "0,1" \
+	&& "$program" "$exercise" "A" "" \
+	&& "$program" "$exercise" "A!" "" \
+	&& "$program" "$exercise" "A" "42" \
+	&& "$program" "$exercise" "A!" "" "42"\
+	&& "$program" "$exercise" "AB|" "0,1,2" ""\
+	&& "$program" "$exercise" "AB&" "0,1,2" "" \
+	&& "$program" "$exercise" "AB&" "0,1,2" "0" \
+	&& "$program" "$exercise" "AB&" "0,1,2" "42" \
+	&& "$program" "$exercise" "AB^" "0,1,2" "0" \
+	&& "$program" "$exercise" "AB>" "0" "1,2" \
+	&& "$program" "$exercise" "AB>" "0" "0,1,2" \
 	&& "$program" "$exercise" "AB&" "0,1,2" "0,3,4" \
 	&& "$program" "$exercise" "AB&" "0,1,2,3" "0,2,3,4" \
+	&& "$program" "$exercise" "ABC||" "" "" "" \
+	&& "$program" "$exercise" "ABC||" "0" "1" "2" \
+	&& "$program" "$exercise" "ABC||" "0" "0" "0" \
+	&& "$program" "$exercise" "ABC&&" "0" "0" "" \
+	&& "$program" "$exercise" "ABC&&" "0" "0" "0" \
+	&& "$program" "$exercise" "ABC^^" "0" "0" "0" \
+	&& "$program" "$exercise" "ABC>>" "0" "0" "0" \
 	&& "$program" "$exercise" "AB|" "0,1,2" "3,4,5" \
 	&& "$program" "$exercise" "AB^" "1,2" "2,3" \
 	&& "$program" "$exercise" "XY^" "1,2" "2,3" \

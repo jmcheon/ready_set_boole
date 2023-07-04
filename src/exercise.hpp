@@ -29,7 +29,6 @@ void	ex09(int argc, char** argv);
 void	ex10_11(int argc, char** argv);
 
 void	runtimeException(const std::string& str, const std::string& value = std::string());
-//std::ostream&	operator<<(std::ostream& cout, const t_vec2s& tuple);
 template <class T>
 std::ostream&	operator<<(std::ostream& cout, const std::vector<T>& vec)
 {
