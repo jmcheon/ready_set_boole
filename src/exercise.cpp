@@ -1,5 +1,15 @@
 #include "exercise.hpp"
 
+void	runtimeException(const std::string& str, const std::string& value)
+{
+	std::stringstream	error_message;
+	if (!value.empty())
+		error_message << RED << str << " '" << value << "'" << FIN;
+	else
+		error_message << RED << str << FIN;
+	throw std::runtime_error(error_message.str());
+}
+
 std::ostream&	operator<<(std::ostream& cout, const t_vec2s& tuple)
 {
 	return cout << "( " << tuple.x << ", " << tuple.y << " )";

@@ -33,14 +33,14 @@ std::unique_ptr<RPNNode> buildTree(const std::string& formula, bool variable)
 		{
 			if ((variable && !(c >= 'A' && c <= 'Z'))
 				|| (!variable && !(c == '1' || c == '0')))
-				throw std::runtime_error("Invalid formula: Unexpected symbol");
+				runtimeException("Invalid formula: Unexpected symbol");
 			std::unique_ptr<RPNNode> new_node = std::make_unique<RPNNode>(c);
 			stack.push(std::move(new_node));
 		}
 		else if (c == '!')
 		{
 			if (stack.empty())
-				throw std::runtime_error("Invalid formula: Not enough operands");
+				runtimeException("Invalid formula: Not enough operands");
 			std::unique_ptr<RPNNode> new_node = std::make_unique<RPNNode>(c);
 			new_node->m_left = std::move(stack.top());
 			new_node->m_left->m_parent = new_node->clone();
@@ -50,7 +50,7 @@ std::unique_ptr<RPNNode> buildTree(const std::string& formula, bool variable)
 		else if (c == '&' || c == '|' || c == '^' || c == '>' || c == '=')
 		{
 			if (stack.size() < 2)
-				throw std::runtime_error("Invalid formula: Not enough operands");
+				runtimeException("Invalid formula: Not enough operands");
 
 			std::unique_ptr<RPNNode> new_node = std::make_unique<RPNNode>(c);
 
@@ -65,10 +65,10 @@ std::unique_ptr<RPNNode> buildTree(const std::string& formula, bool variable)
 			stack.push(std::move(new_node));
 		}
 		else
-			throw std::runtime_error("Invalid formula: Unexpected symbol");
+			runtimeException("Invalid formula: Unexpected symbol");
 	}
 	if (stack.size() != 1)
-		throw std::runtime_error("Invalid formula: Too many operands");
+		runtimeException("Invalid formula: Too many operands");
 	return std::move(stack.top());
 }
 
@@ -117,23 +117,6 @@ std::string	inorder(std::unique_ptr<RPNNode>& root)
 
 std::unique_ptr<RPNNode> distribute(std::unique_ptr<RPNNode>& a, std::unique_ptr<RPNNode>& b, std::unique_ptr<RPNNode>& c, std::unique_ptr<RPNNode>& d, bool left)
 {
-	/*
-	if (a)
-	{
-	std::cout << "a:" << a->getValue() << std::endl;
-	printTree(a.get(), true);
-	}
-	std::cout << "b:" << b->getValue() << std::endl;
-	printTree(b.get(), true);
-	std::cout << "c:" << c->getValue() << std::endl;
-	printTree(c.get(), true);
-	if (d)
-	{
-		std::cout << "d:" << d->getValue() << std::endl;
-		printTree(d.get(), true);
-	}
-	*/
-
     std::unique_ptr<RPNNode> new_root = std::make_unique<RPNNode>('&');
 
 	if (d)
@@ -159,7 +142,6 @@ std::unique_ptr<RPNNode> distribute(std::unique_ptr<RPNNode>& a, std::unique_ptr
     	new_root->m_left = std::make_unique<RPNNode>('|', a->clone(), std::move(b), new_root->clone());
     	new_root->m_right = std::make_unique<RPNNode>('|', a->clone(), std::move(c), new_root->clone());
 	}
-	//std::cout << "new:" << new_root->getValue() << std::endl;
     return new_root;
 }
 
@@ -177,7 +159,7 @@ static bool	isDistributable(const std::unique_ptr<RPNNode>& root)
     return (root->getValue() == '|' && ((root->m_left && root->m_left->getValue() == '&') || (root->m_right && root->m_right->getValue() == '&')));
 }
 
-std::unique_ptr<RPNNode> apply(std::unique_ptr<RPNNode>& root)
+std::unique_ptr<RPNNode> applyConjunctionRearrange(std::unique_ptr<RPNNode>& root)
 {
 	RPNNode* a;
 	RPNNode* b;
@@ -185,40 +167,16 @@ std::unique_ptr<RPNNode> apply(std::unique_ptr<RPNNode>& root)
 	
 	if (root->getValue() == '&' && root->m_right && root->m_right->getValue() == '&')
 	{
-
-		//std::cout << root->m_right->getValue() << std::endl;
-		//a = std::move(root->m_right);
 		a = root->m_right.get();
-
-
-		//std::cout << root->m_left->getValue() << std::endl;
-		c = root->m_left.get();
-
 		b = root->m_right.get();
-		//std::cout << b->getValue() << std::endl;
-
+		c = root->m_left.get();
 		while (b->m_left->getValue() == '&')
 			b = b->m_left.get();
 
     	std::unique_ptr<RPNNode> new_root = std::make_unique<RPNNode>('&');
     	new_root->m_left = std::make_unique<RPNNode>(*c);
     	new_root->m_right = std::make_unique<RPNNode>(*b->m_left);
-
-		//printTree(new_root.get(), true);
-		/*
-		std::cout << "b: " << b->getValue() << std::endl;
-		std::cout << "b-l: " << b->m_left->getValue() << std::endl;
-		std::cout << "b-p: " << b->m_parent->getValue() << std::endl;
-		std::cout << "b-p-r: " << b->m_parent->m_right->getValue() << std::endl;
-		std::cout << "b-p-l: " << b->m_parent->m_left->getValue() << std::endl;
-		*/
-		//b->m_parent->m_left = std::move(new_root);
 		b->m_left = std::move(new_root);
-		//b = std::move(new_root);
-
-		//printTree(a, true);
-		//std::cout << postorder(root) << std::endl;
-		//std::cout << BLUE << preorder(root) << FIN << std::endl;
     	return std::make_unique<RPNNode>(*a);
     }
 	return nullptr;
@@ -238,8 +196,6 @@ std::unique_ptr<RPNNode> applyDistributiveLaw(std::unique_ptr<RPNNode>& root)
     if (isDistributable(root)) {
         std::unique_ptr<RPNNode> a, b, c, d;
 
-		//std::cout << "value:" << root->getValue() << std::endl;
-
         if ((root->m_left && root->m_left->getValue() == '&') 
 			&& (root->m_right && root->m_right->getValue() == '&'))
 		{
@@ -251,49 +207,29 @@ std::unique_ptr<RPNNode> applyDistributiveLaw(std::unique_ptr<RPNNode>& root)
         else if (root->m_left && root->m_left->getValue() == '&')
 		{
 			left = true;
-			//std::cout << "1left:" << root->m_left->getValue() << std::endl;
-			//std::cout << "1right:" << root->m_right->getValue() << std::endl;
 			if (!isOperator(root->m_right->getValue()))
 		    	a = std::move(root->m_right);
 			else
 		    	a = std::move(root->m_right->m_right);
 
 			if (root->m_left->m_left)
-			{
-				//std::cout << "1left-left:" << root->m_left->m_left->getValue() << std::endl;
 		    	b = std::move(root->m_left->m_left);
-			}
 			else
-			{
-				//std::cout << "1left:" << root->m_left->getValue() << std::endl;
 				b = root->m_left->clone();
-			}
 
 			if (root->m_left->m_right)
-			{
-				//std::cout << "1left-right:" << root->m_left->m_right->getValue() << std::endl;
 		    	c = std::move(root->m_left->m_right);
-			}
 			else
 				c = root->m_right->m_left->clone();
         }
 		else if (root->m_right && root->m_right->getValue() == '&')
 		{
-			/*
-			if (root->m_left)
-				std::cout << "2left:" << root->m_left->getValue() << std::endl;
-			if (root->m_right)
-				std::cout << "2right:" << root->m_right->getValue() << std::endl;
-				*/
 		    a = std::move(root->m_left);
 		    b = std::move(root->m_right->m_left);
 		    c = std::move(root->m_right->m_right);
         }
 		else
 		{
-			//std::cout << "3left:" << root->m_left->getValue() << std::endl;
-			//std::cout << "3right:" << root->m_right->getValue() << std::endl;
-
 			a = std::move(root->m_left);
 			b = std::move(root->m_right->m_left);
 			c = std::move(root->m_right->m_right);
@@ -313,69 +249,6 @@ std::unique_ptr<RPNNode> applyDistributiveLaw(std::unique_ptr<RPNNode>& root)
 
     return std::move(root);
 }
-
-/*
-std::unique_ptr<RPNNode> applyDistributiveLaw0(std::unique_ptr<RPNNode>& root)
-{
-    if (!root)
-		return nullptr;
-	if (root->m_left)
-		root->m_left = applyDistributiveLaw(root->m_left);
-	if (root->m_right)
-		root->m_right = applyDistributiveLaw(root->m_right);
-
-    if (isDistributable(root)) {
-        std::unique_ptr<RPNNode> a, b, c;
-
-		std::cout << "value:" << root->getValue() << std::endl;
-        if (root->m_left && root->m_left->getValue() == '&') {
-				std::cout << "1left:" << root->m_left->getValue() << std::endl;
-				if (root->m_right)
-					std::cout << "1right:" << root->m_right->getValue() << std::endl;
-			    a = std::move(root->m_right);
-				//std::cout << "right:" << root->m_right->getValue() << std::endl;
-			    b = std::move(root->m_left->m_left);
-			    c = std::move(root->m_left->m_right);
-        } else if (root->m_right && root->m_right->getValue() == '&') {
-				std::cout << "2left:" << root->m_left->getValue() << std::endl;
-				std::cout << "2right:" << root->m_right->getValue() << std::endl;
-				if (isupper(root->m_right->getValue()))
-			    	a = std::move(root->m_right);
-				else
-			    	a = std::move(root->m_right->m_right);
-				if (root->m_left->m_left)
-				{
-					std::cout << "2left-left:" << root->m_left->m_left->getValue() << std::endl;
-			    	b = std::move(root->m_left->m_left);
-				}
-				else
-				{
-					std::cout << "2left:" << root->m_left->getValue() << std::endl;
-			    	//b = std::move(root->m_left);
-					b = root->m_left->clone();
-				}
-				if (root->m_left->m_right)
-			    	c = std::move(root->m_left->m_right);
-				else
-					c = root->m_right->m_left->clone();
-        } else { // (root->m_right && root->m_right->getValue() == '|')
-			    a = std::move(root->m_left);
-			    b = std::move(root->m_right->m_left);
-			    c = std::move(root->m_right->m_right);
-        }
-
-        root = distribute(a, b, c, true);
-		printTree(root.get(), true);
-		std::cout << postorder(root) << std::endl;
-		if (root->m_left)
-			root->m_left = applyDistributiveLaw(root->m_left);
-		if (root->m_right)
-			root->m_right = applyDistributiveLaw(root->m_right);
-    }
-
-    return std::move(root);
-}
-*/
 
 void	printNode(const RPNNode* node)
 {

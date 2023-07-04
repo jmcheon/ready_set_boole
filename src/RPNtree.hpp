@@ -5,6 +5,7 @@
 #include <memory>
 #include <stack>
 #include <vector>
+#include "exercise.hpp"
 
 # define YELLOW "\033[0;38;5;220m"
 # define GREEN "\033[0;38;5;42m"
@@ -38,7 +39,6 @@ class RPNNode
 
 		RPNNode(char value) : m_value(value), m_left(nullptr), m_right(nullptr), m_parent(nullptr) { }
 		RPNNode(char value, std::unique_ptr<RPNNode> parent) : m_value(value), m_parent(std::move(parent)) { }
-
 		RPNNode(const RPNNode& other) : m_value(other.m_value)
 		{
 		    if (other.m_left) {
@@ -97,7 +97,7 @@ class RPNNode
 
 std::unique_ptr<RPNNode>	buildTree(const std::string& formula, bool variable = true);
 std::unique_ptr<RPNNode>	applyDistributiveLaw(std::unique_ptr<RPNNode>& root);
-std::unique_ptr<RPNNode>	apply(std::unique_ptr<RPNNode>& root);
+std::unique_ptr<RPNNode>	applyConjunctionRearrange(std::unique_ptr<RPNNode>& root);
 std::string					preorder(std::unique_ptr<RPNNode>& root);
 std::string					inorder(std::unique_ptr<RPNNode>& root);
 std::string					postorder(std::unique_ptr<RPNNode>& root);

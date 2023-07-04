@@ -54,8 +54,9 @@ static bool	evalOperator(char op, bool operand1, bool operand2)
 		case '=':
 			return operand1 == operand2;
 		default:
-			throw std::runtime_error("Invalid symbol");
+			runtimeException("Invalid symbol");
 	}
+	return false;
 };
 
 // ex03 Boolean evaluation O(n) / NA
@@ -89,7 +90,7 @@ bool	RSB::evalFormula(const std::string& formula)
 			eval_stack.push(result);
 		}
 		else
-			throw std::runtime_error("Invalid symbol");
+			runtimeException("Invalid symbol");
 	}
 	return eval_stack.top();
 };
@@ -119,11 +120,7 @@ static std::vector<std::pair<char, size_t> >	getVariables(const std::string& for
 			}
 		}
 		else if (c == '0' || c == '1')
-		{
-			std::stringstream error_message;
-			error_message << "Invalid symbol '" << c << "'";
-			throw std::runtime_error(error_message.str());
-		}
+			runtimeException("Invalid symbol", std::string(1, c));
 	}
 	if (ordered)
 	{
@@ -305,11 +302,7 @@ const std::string	RSB::negationNormalForm(const std::string& formula)
         	stack.push(temp2 + temp + c);
 		}
 		else
-		{
-			std::stringstream error_message;
-			error_message << "Invalid symbol '" << c << "'";
-			throw std::runtime_error(error_message.str());
-		}
+			runtimeException("Invalid symbol", std::string(1, c));
 	}
 	return stack.top();
 };
@@ -396,7 +389,7 @@ const std::string	RSB::conjunctiveNormalForm(const std::string& formula)
 	}
 	else
 		result = temp_formula;
-	cnf = apply(cnf);
+	cnf = applyConjunctionRearrange(cnf);
 	if (cnf != nullptr)
 		result = preorder(cnf);
 

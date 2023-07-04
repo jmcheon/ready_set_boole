@@ -7,6 +7,7 @@
 #include <functional>
 #include <unordered_set>
 #include "RPNtree.hpp"
+#include "exercise.hpp"
 
 // Maximum value for unsigned short (2^16 - 1) in 64-bit
 //const unsigned long long MAX_VALUE = (1ULL << 32) - 1;

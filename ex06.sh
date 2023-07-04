@@ -16,6 +16,35 @@ program="./rsb"
 output_file="output.txt"
 print_table="false"
 
+example_formulas=(
+    "A!B!&C!|"
+    "A!B|C!&"
+    "A!B|C!|D&"
+    "A!B&C!|D&"
+    "A!B&C!|D|"
+    "A!B|C!&D|"
+	)
+
+basic_formulas=(
+    "A"
+    "A!"
+    "AB&!"
+    "AB|!"
+    "AB>!"
+    "AB=!"
+	)
+
+composition_formulas=(
+    "ABC||"
+    "ABC||!"
+    "ABC|&"
+    "ABC&|"
+    "ABC&|!"
+    "ABC^^"
+    "ABC>>"
+    "ABC=="
+	)
+
 run_or_make() {
     local program="$1"
 	local exercise="$2"
@@ -39,28 +68,28 @@ if [ $# -eq 0 ]; then
 	echo -e "Executing main examples.\n"
 	echo -e "\tUsage: ./$script_name [formula] print"
 	echo -e "\tUsage: ./$script_name [formula]"
-	echo -e "\tUsage: ./$script_name test\n"
+	echo -e "\tUsage: ./$script_name <example, basic, composition>\n"
 	run_or_make "$program" "$exercise"
+
 elif [ $# -eq 1 ]; then
 	#echo "Arguments provided: $1"
-	if [ "$1" = "test" ]; then
-    	formulas=(
-    	    "A!B!&C!|"
-    	    "A!B|C!&"
-    	    "A!B|C!|D&"
-    	    "A!B&C!|D&"
-    	    "A!B&C!|D|"
-    	    "A!B|C!&D|"
-			)
-
-    	for formula in "${formulas[@]}"; do
-			echo ""
-    	    echo "Running $program with equation: $formula"
+	if [ "$1" = "example" ]; then
+    	for formula in "${example_formulas[@]}"; do
+    	    #echo -e "\nRunning $program with equation: $formula"
+    	    run_or_make "$program" "$exercise" "$formula" 
+    	done
+	elif [ "$1" = "basic" ]; then
+    	for formula in "${basic_formulas[@]}"; do
+    	    run_or_make "$program" "$exercise" "$formula" 
+    	done
+	elif [ "$1" = "composition" ]; then
+    	for formula in "${composition_formulas[@]}"; do
     	    run_or_make "$program" "$exercise" "$formula" 
     	done
 	else
 		run_or_make "$program" "$exercise" "$1"
 	fi
+
 elif [ $# -eq 2 ]; then
 	if [ "$2" = "print" ]; then
 		run_or_make "$program" "$exercise" "$1" "$2" >> "$output_file"
@@ -70,7 +99,7 @@ else
 	echo -e "Wrong number of arguments provided: $@\n"
 	echo -e "\tUsage: ./$script_name [formula] print"
 	echo -e "\tUsage: ./$script_name [formula]"
-	echo -e "\tUsage: ./$script_name test\n"
+	echo -e "\tUsage: ./$script_name <example, basic, composition>\n"
 fi
 
 
