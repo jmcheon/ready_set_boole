@@ -103,7 +103,8 @@ void	ex05(int argc, char** argv)
 	{
 		std::cout << "AB&! -> " << GREEN << rsb.negationNormalForm("AB&!") << FIN << std::endl;
 		std::cout << "AB|! -> " << GREEN << rsb.negationNormalForm("AB|!") << FIN << std::endl;
-		std::cout << "AB^ -> " << GREEN << rsb.negationNormalForm("AB>") << FIN << std::endl;
+		std::cout << "AB> -> " << GREEN << rsb.negationNormalForm("AB>") << FIN << std::endl;
+		std::cout << "AB^ -> " << GREEN << rsb.negationNormalForm("AB^") << FIN << std::endl;
 		std::cout << "AB= -> " << GREEN << rsb.negationNormalForm("AB=") << FIN << std::endl;
 		std::cout << "AB|C&! -> " << GREEN << rsb.negationNormalForm("AB|C&!") << FIN << std::endl;
 	}

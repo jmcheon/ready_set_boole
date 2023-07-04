@@ -172,11 +172,14 @@ void	RSB::printTruthTable(const std::string& formula, bool ordered)
 	{
 		std::cout << "| ";
 		temp_formula = formula;
-		for (const auto& variable : variables)
+		//for (const auto& variable : variables)
+		for (int j = variables.size() - 1; j >= 0; --j)
 		{
-			size_t m_value = (i >> (variable.second - 1)) & 1;
+			//size_t m_value = (i >> (variable.second - 1)) & 1;
+			size_t m_value = (i >> (variables[j].second - 1)) & 1;
 			std::cout << m_value << " | ";
-			std::replace(temp_formula.begin(), temp_formula.end(), variable.first, (char)(m_value + '0'));
+			//std::replace(temp_formula.begin(), temp_formula.end(), variable.first, (char)(m_value + '0'));
+			std::replace(temp_formula.begin(), temp_formula.end(), variables[j].first, (char)(m_value + '0'));
 		}
 		std::cout << evalFormula(temp_formula) << " |\n";
 	}
@@ -240,7 +243,8 @@ static const std::string	simplifyForm(const std::string& formula)
 			{
         	    temp = stack.top(); stack.pop();
         	    temp2 = stack.top(); stack.pop();
-        	    stack.push(temp2 + temp + "!&" + temp2 + "!" + temp + "&|");
+        	    //stack.push(temp2 + temp + "!&" + temp2 + "!" + temp + "&|");
+        	    stack.push(temp2 + temp + "!|" + temp2 + "!" + temp + "|&");
         	}
         	else if (c == '>')
 			{
@@ -252,7 +256,8 @@ static const std::string	simplifyForm(const std::string& formula)
 			{
         	    temp = stack.top(); stack.pop();
         	    temp2 = stack.top(); stack.pop();
-        	    std::string nnf = temp2 + temp + "&" + temp2 + "!" + temp + "!&|";
+        	    //std::string nnf = temp2 + temp + "&" + temp2 + "!" + temp + "!&|";
+        	    std::string nnf = temp2 + "!" + temp + "|" + temp2 + temp + "!|&";
         	    stack.push(nnf);
 			}
 		}
@@ -378,9 +383,9 @@ const std::string	RSB::conjunctiveNormalForm(const std::string& formula)
 		return formula;
 	temp_formula = negationNormalForm(formula);
 	temp_formula = rearrangeOnlyAndOr(temp_formula);
-	std::cout << temp_formula << std::endl;
+	//std::cout << temp_formula << std::endl;
 	cnf = buildTree(temp_formula);
-	printTree(cnf.get(), true);
+	//printTree(cnf.get(), true);
 	if (checkAndBeforeOr(temp_formula))
 	{
 		cnf = buildTree(temp_formula);
@@ -391,6 +396,9 @@ const std::string	RSB::conjunctiveNormalForm(const std::string& formula)
 	}
 	else
 		result = temp_formula;
+	cnf = apply(cnf);
+	if (cnf != nullptr)
+		result = preorder(cnf);
 
 	return result;
 };

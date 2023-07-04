@@ -39,6 +39,16 @@ class RPNNode
 		RPNNode(char value) : m_value(value), m_left(nullptr), m_right(nullptr), m_parent(nullptr) { }
 		RPNNode(char value, std::unique_ptr<RPNNode> parent) : m_value(value), m_parent(std::move(parent)) { }
 
+		RPNNode(const RPNNode& other) : m_value(other.m_value)
+		{
+		    if (other.m_left) {
+		        m_left = std::make_unique<RPNNode>(*other.m_left);
+		    }
+		    if (other.m_right) {
+		        m_right = std::make_unique<RPNNode>(*other.m_right);
+		    }
+		}
+
 		std::unique_ptr<RPNNode> clone()
 		{
 			std::unique_ptr<RPNNode> new_node = std::make_unique<RPNNode>(m_value, nullptr);
@@ -49,6 +59,12 @@ class RPNNode
 			    new_node->m_right = (m_right->clone());
 			return new_node;
     	}
+
+		std::shared_ptr<RPNNode> getSharedNodePtr()
+		{
+			std::unique_ptr<RPNNode> temp = std::make_unique<RPNNode>(*this);
+        	return std::shared_ptr<RPNNode>(std::move(temp));
+		}
 
 		char				getValue() const { return m_value; }
 		const RPNNode*		getLeft() const { return m_left.get(); }
@@ -81,6 +97,7 @@ class RPNNode
 
 std::unique_ptr<RPNNode>	buildTree(const std::string& formula, bool variable = true);
 std::unique_ptr<RPNNode>	applyDistributiveLaw(std::unique_ptr<RPNNode>& root);
+std::unique_ptr<RPNNode>	apply(std::unique_ptr<RPNNode>& root);
 std::string					preorder(std::unique_ptr<RPNNode>& root);
 std::string					inorder(std::unique_ptr<RPNNode>& root);
 std::string					postorder(std::unique_ptr<RPNNode>& root);
