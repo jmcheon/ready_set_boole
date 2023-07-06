@@ -70,8 +70,8 @@ bool	RSB::evalFormula(const std::string& formula)
 	{
 		if (std::isdigit(c))
 		{
-			bool m_value = c == '1';
-			eval_stack.push(m_value);
+			bool value = c == '1';
+			eval_stack.push(value);
 		}
 		else if (c == '!')
 		{
@@ -170,9 +170,9 @@ void	RSB::printTruthTable(const std::string& formula, bool ordered)
 		temp_formula = formula;
 		for (int j = variables.size() - 1; j >= 0; --j)
 		{
-			size_t m_value = (i >> (variables[j].second - 1)) & 1;
-			std::cout << m_value << " | ";
-			std::replace(temp_formula.begin(), temp_formula.end(), variables[j].first, (char)(m_value + '0'));
+			size_t value = (i >> (variables[j].second - 1)) & 1;
+			std::cout << value << " | ";
+			std::replace(temp_formula.begin(), temp_formula.end(), variables[j].first, (char)(value + '0'));
 		}
 		std::cout << evalFormula(temp_formula) << " |\n";
 	}
@@ -221,7 +221,7 @@ static std::string	applyNegation(std::string& formula)
 	return stack.top();
 };
 
-static const std::string	simplifyForm(const std::string& formula)
+static const std::string	rewriteFormula(const std::string& formula)
 {
 	std::stack<std::string> stack;
 	std::string temp, temp2;
@@ -277,7 +277,7 @@ const std::string	RSB::negationNormalForm(const std::string& formula)
 
 	if (!checkFormula(formula, true, false))
 		return formula;
-	temp_formula = simplifyForm(formula);
+	temp_formula = rewriteFormula(formula);
 	for (char c : temp_formula)
 	{
 		if (isalpha(c))
