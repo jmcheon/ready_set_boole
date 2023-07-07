@@ -172,7 +172,7 @@ void	RSB::printTruthTable(const std::string& formula, bool ordered)
 		{
 			size_t value = (i >> (variables[j].second - 1)) & 1;
 			std::cout << value << " | ";
-			std::replace(temp_formula.begin(), temp_formula.end(), variables[j].first, (char)(value + '0'));
+			std::replace(temp_formula.begin(), temp_formula.end(), variables[variables.size() - j - 1].first, (char)(value + '0'));
 		}
 		std::cout << evalFormula(temp_formula) << " |\n";
 	}
