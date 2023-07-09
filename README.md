@@ -3,21 +3,34 @@
 > _**Summary: Discover the way computers work mathematically.**_
 
 
+#### [Read this in French](README-fr.md)
 
-## La Structure du projet
+## Project Structure
 - ReadySetBoole.hpp, ReadySetBoole.cpp
 - RPNtree.hpp, RPNtree.cpp
 
-Pour la structure du projet, il exist deux classes appelées RSB, RPNNode. La première est une classe qui contient toutes les méthodes des exercices et la seconde est une classe pour faire le parsing et vérifier la syntax de la formule propositionnelle.
+For the project structure, there are two classes called RSB, RPNNode. The first is a class that contains all the methods of the exercises and the second is a class to do the parsing and check the syntax of the propositional formula. 
 
 - exercise.hpp, exercise.cpp
 - main.cpp
 
-Ensuite, Il exist deux fichiers exercise.cpp, exercise.hpp pour effectuer les exercices avec main.cpp
+Then, there are two files exercise.cpp, exercise.hpp to perform the exercises with main.cpp
+### Class RSB
 
-### Classe RSB
+[Exercise 00 - Adder](#ex00)<br>
+[Exercise 01 - Multiplier](#ex01)<br>
+[Exercise 02 - Gray code](#ex02)<br>
+[Exercise 03 - Boolean evaluation](#ex03)<br>
+[Exercise 04 - Truth table](#ex04)<br>
+[Exercise 05 - Negation Normal Form](#ex05)<br>
+[Exercise 06 - Conjunctive Normal Form](#ex06)<br>
+[Exercise 07 - SAT](#ex07)<br>
+[Exercise 08 - Powerset](#ex08)<br>
+[Exercise 09 - Set evaluation](#ex09)<br>
+[Exercise 10, 11 - Curve, Inverse function](#ex10_11)<br>
 
 ---
+<a id="ex00"></a>
 <table>
 <tr><th>Exercise 00 -  Adder</th></tr>
 <tr><td>Allowed mathematical functions : None </tr>
@@ -25,7 +38,7 @@ Ensuite, Il exist deux fichiers exercise.cpp, exercise.hpp pour effectuer les ex
 <tr><td>Maximum space complexity : O(1)</tr>
 </table>
 
-```
+``` c++
 unsigned int RSB::adder(unsigned int a, unsigned int b)
 {
         unsigned int carry = 0;
@@ -39,23 +52,24 @@ unsigned int RSB::adder(unsigned int a, unsigned int b)
         return (a);
 };
 ```
-#### Comment elle fonctionne:
+#### How it works:
 
-1. Elle prend deux parametères entiers non signés a et b.
-2. Elle initialise une variable `carry` à 0 pour stocker la retenue.
-3. Elle entre dans une boule `while` tant que b n'est pas égal à 0.
-4. À chaque itération de la boucle, elle effectue les opérations suivantes:
-	- Elle effectue un **ET** logique entre `a` et `b` pour obtenir la valeur de la retenue.
-	- Elle effectue un **XOR**  entre `a` et `b` pour obtenir la somme sans retenue.
-	- Elle décale la valeur de `carry` d'une position vers la gauche en ajoutant un zéro à droite.
-	- Elle réassigne la valuer de `a` à la somme obtenue et la valeur de `b` à `carry`.
-5. Une fois la valeur de `b` est égal à 0, la boucle se termine et la fonction returne la valeur finale de `a` qui est la somme des deux nombres.
+1. It takes two unsigned integer parameters `a` and `b`.
+2. It initializes a `carry` variable to 0 to store the carry.
+3. It enters a `while` loop until `b` is equal to 0.
+4. On each iteration of the loop, it does the following:
+	- It performs a logical **AND** between `a` and `b` to get the carry value.
+	- It performs a **XOR** between `a` and `b` to get the sum without carry.
+	- It shifts the value of `carry` one position to the left by adding a leading zero.
+	- It reassigns the value of `a` to the obtained sum and the value of `b` to carry.
+5. Once the value of `b` is equal to 0, the loop ends and the function returns the final value of `a` which is the sum of the two numbers.
 
-#### Complexité:
+#### Complexity:
 
-La complexité de cette fonction est **O(1)**, ce qui signifie que le temps d'execution ne dépend pas de la taille des nombres `a` et `b`. Peu importe la taille des nombres, le nombre d'itérations de la boucle reste constant.
+The complexity of this function is **O(1)**, which means that the execution time doesn't depend on the size of the numbers `a` and `b`. No matter the size of the numbers, the number of iterations of the loop remains constant.
 
 ---
+<a id="ex01"></a>
 <table>
 <tr><th>Exercise 01 -  Multiplier</th></tr>
 <tr><td>Allowed mathematical functions : None </tr>
@@ -63,7 +77,7 @@ La complexité de cette fonction est **O(1)**, ce qui signifie que le temps d'ex
 <tr><td>Maximum space complexity : O(1)</tr>
 </table>
 
-```
+``` c++
 unsigned int RSB::multiplier(unsigned int a, unsigned int b)
 {
         unsigned int result = 0;
@@ -79,23 +93,25 @@ unsigned int RSB::multiplier(unsigned int a, unsigned int b)
         return (result);
 };
 ```
-#### Comment elle fonctionne:
+#### How it works:
 
-1. Elle prend deux parametères entiers non signés `a` et `b`.
-2. Elle initialise une variable `result` à 0 pour stocker le résultat de la multiplication.
-3. Elle entre dans la boucle `while` tant que `b` n'est pas égal à 0.
-4. À chaque itération de la boucle, elle effectue les opérations suivantes:
-	- Elle vérifie le bit de poids faible de `b` en utilisant un **ET** logique avec 1.
-	- Si le bit est égal à 1, elle appelle la fonction `adder` pour ajouter la valeur de `a` à `result`.
-	- Elle décale la valeur de `a` d'une position vers la gauche en ajoutant un zéro à droite.
-	- Elle décale la valeur de `b` d'une position vers la droite en perdant le bit de poids faible.
-5. Une fois la valeur de `b` est égal à 0, la boucle se termine et la fonction returne la valeur finale de `result`, qui est le produit des deux nombres.
+1. It takes two unsigned integer parameters `a` and `b`.
+2. It initializes a `result` variable to 0 to store the result of the multiplication.
+3. It enters a `while` loop until `b` is equal to 0.
+4. On each iteration of the loop, it does the following:
+	- It checks the least significant bit of `b` using a logical **AND** with 1.
+	- If the bit is equal to 1, it calls the `adder` function to add the value of `a` to `result`.
+	- It shifts the value of `a` one position to the left by adding a leading zero.
+	- It shifts the value of `b` one position to the right, losing the least significant bit.
+5. Once the value of `b` is equal to 0, the loop ends and the function returns the final value of `result`, which is the product of the two numbers.
 
-#### Complexité
 
-La complexité de cette fonction est **O(1)**, car le nombre d'itérations de la boucle `while` dépend du nombre de bits de `b` qui reste constant indépendamment de la taille des nombres `a` et `b`.
+#### Complexity
+
+The complexity of this function is **O(1)**, because the number of iterations of the `while` loop depends on the number of bits of `b` that remains constant regardless of the size of the numbers `a` and `b`.
 
 ---
+<a id="ex02"></a>
 <table>
 <tr><th>Exercise 02 -  Gray code</th></tr>
 <tr><td>Allowed mathematical functions : None </tr>
@@ -103,7 +119,7 @@ La complexité de cette fonction est **O(1)**, car le nombre d'itérations de la
 <tr><td>Maximum space complexity : N/A</tr>
 </table>
 
-```
+``` c++
 unsigned int RSB::grayCode(unsigned int n)
 {
         // perform XOR operation between n and n shifted right by 1 bit
@@ -111,21 +127,22 @@ unsigned int RSB::grayCode(unsigned int n)
 };
 ```
 
-#### Comment elle fonctionne:
+#### How it works:
 
-1. Elle prend un parametère entire non signé `n`.
-2. Elle effectue un **XOR** entre `n` et le résultat du décalage de `n` d'un bit vers la droite (n >> 1).
-3. Le résultat du **XOR** est renvoyé comme le code Gray correspondant à `n`.
+1. It takes one unsigned integer parameter `n`.
+2. It performs a **XOR** between `n` and the result of the `n` shifted right by 1 bit (n >> 1).
+3. The result of **XOR** is returned as the Gray code corresponding to `n`.
 
-#### Code Gray
+#### Gray Code
 
-Le code Gray est un système de numération binaire dans lequel deux nombres adjacents ne diffèrent que d'un seul bit.
+Gray code is a binary number system in which two adjacent numbers differ by only one bit.
 
-Le code Gray est utilisé dans divers domaines, notamment en électroniques, en télécommunications et en théorie de l'information. Il est utilisé pour éviter les erreurs de commutation lors du passage d'un nombre binaire à un autre nombre binaire adjacent.
+Gray code is used in a variety of fields, including electronics, telecommunications, and information theory. It is used to avoid switching errors when switching one binary number to another adjacent binary number.
+
 // une image d'un example du code Gray
 
 ---
-
+<a id="ex03"></a>
 <table>
 <tr><th>Exercise 03 -  Boolean evaluation</th></tr>
 <tr><td>Allowed mathematical functions : None </tr>
@@ -133,7 +150,7 @@ Le code Gray est utilisé dans divers domaines, notamment en électroniques, en 
 <tr><td>Maximum space complexity : N/A</tr>
 </table>
 
-```
+``` c++
 bool    RSB::evalFormula(const std::string& formula)
 {
         std::stack<bool>        eval_stack;
@@ -169,28 +186,27 @@ bool    RSB::evalFormula(const std::string& formula)
         return eval_stack.top();
 };
 ```
-La fonction `evalOperator` évalue une opération entre deux opérandes et renvoye le résultat. elle prend trois parametères: l'opérateur (op) et les deux opérandes (oprand1, oprand2).
+The  `evalOperator` function evaluates an operation between two operands and returns the result. It takes three parameters: the operator (op) and the two operands (operand1, operand2).
 
-La fonction `evalFormula` évalue la formule booléenne répresentée par une chaîne de caractères. elle utilise une pile(stack) pour évaluer les opérations et les opérandes.
+The `evalFormula` function evaluates the boolean formula represented by a character string. It uses a stack to evaluate operations and operands.
 
-#### Comment elle fonctionne:
+#### How it works:
 
-1.	Elle vérifie d'abord la validité de la formule en appelant la fonction `checkFormula` du fichier `RPNtree.cpp` avec le parametère `formula`. Si la formule n'est pas valide, la foction renvoye `false`.
-2.	Ensuite, elle parcourt chaque caractère de la formule en utilisant une boucle `for`.
-3.	Si le caractère est un chiffre (0 ou 1), elle crée un booléen `value` en fonction de la valeur du chiffre et le pousse dans la pile `eval_stack`.
-4.	Si le caractère est `!`, elle récupère l'opérande en haut de la pile, l'enlève de la pile, effectue la négation et pousse le résultat dans la pile.
-5.	Si le caractère est l'un des opératieurs `&`, `|`, `^`, `>` ou `=`, elle récupère les deux opérandes supérieurs de la pile, les enlève de la pile, appelle la fonction `evalOperator` avec l'opérateur et les opérandes et pousse le résultat dans la pile.
-6.	Si le caractère n'est aucun des chiffres ni des opérateurs valides, une exception "Invalid symbol" est lancée.
-7.	Après avoir parcouru tous les caractère de la formule, la fonction revoye le résultat final qui se trouve en haut de la pile `eval_stack`.
 
-#### Complexité
+1.	It first checks the validity of the formula by calling `checkFormula` function from the `RPNtree.cpp` file with the `formula` parameter. If the formula isn't valid, the function returns `false`. 
+2.	Then, it loops through each character in the formula using a `for` loop.
+3.	If the character is a digit (0 or 1), it creates a boolean `value` based on the value of the digit and pushes it into the `eval_stack` stack.
+4.	If the character is `!`, it retrieves the operand from the top of the stack, pops it off the stack, performs the negation, and pushes the result into the stack.
+5.	If the character is one of the operators `&`, `|`, `^`, `>` ou `=`, it retrieves the top two operands from the stack, pops them off the stack, calls the `evalOperator` function with the operator and the operands and pushes the result into the stack. 
+6.	If the character isn't none of the valid digits or operators, an "Invalid symbol" exception is thrown.
+7.	After looping through all the characters of the formula, the function returns the final result which is at the top of the `eval_stack` stack.
 
-La complexité de cette fonction dépend de la longeur de la formule (n), donc elle est **O(n)**.
+#### Complexity
 
+The complexity of this function depends on the length of the formula (n), so it is **O(n)**.
 
 ---
-
-
+<a id="ex04"></a>
 <table>
 <tr><th>Exercise 04 - Truth table </th></tr>
 <tr><td>Allowed mathematical functions : None </tr>
@@ -198,7 +214,7 @@ La complexité de cette fonction dépend de la longeur de la formule (n), donc e
 <tr><td>Maximum space complexity : N/A</tr>
 </table>
     
-```
+``` c++
 void    RSB::printTruthTable(const std::string& formula, bool ordered)
 {
         std::vector<std::pair<char, size_t> > variables;
@@ -237,32 +253,30 @@ void    RSB::printTruthTable(const std::string& formula, bool ordered)
         }
 };
 ```
-La fonction `getVariables` récupère les variables présentes dans une formule booléenne donnée. elle renvoie un vecteur de paires où chaque paire représente une variable et son numéro d'ordre.
+The `getVariables` function retrieves the variables present in a given boolean formula. it returns a vector of pairs where each pair represents a variable and its order number.
 
-La fonction `printTruthTable` imprime la table de vérité d'une formule booléenne donnée.
+The `printTruthTable` function prints the truth table of a given boolean formula.
 
-#### Comment elle fonctionne:
+#### How it works:
 
-1. Elle initialise les variables locales: `variables` pour stocker les variables présentes dans la formule, `temp_formula` pour créer une copie temporaire de la formule, `variable_count` pour déterminer le nombre de variables, `rows` pour le nombre total de lignes dans la table de vériteé.
-2. Elle vérifie d'abord la validité de la formule en appelant la fonction `checkFormula` avec le parametère `formula`. Si la formule n'est pas valide, la fonction renvoye.
-3. Elle appelle la fonction `getVariables` pour obtenir les variables de la formule, en spécifiant si elles doivent être triées ou non.
-4. Elle détermine la valeur de `variable_count` en utilisant la fonction `std::max_element` sur le vecteur `variables`.
-5. Elle imprime les en-têtes de colonnes et une ligne de séparation.
-6. Elle calcule le nombre total de lignes dans la table de vérité en utilisant l'opérateur de décalage binaire (`<<`).
-7. Elle itère sur chaque ligne de la table de vérité.
-	- pour chaque ligne, elle imprime les valeurs des variables en parcourant les variables et en utilisant l'opération de décalage binaire (`>>`) et le masque (`1`) pour extraire chaque bit de la valeur de la variable.
-	- Elle remplace les occurances des variables dans la formule temporaire `temp_formula` par les valeurs correspondantes (0 ou 1) à l'aide de la fonction `std::replace`.
-	- Elle évalue la formule temporaire en appelant la fonction `evalFormula` avec la formule modifée.
-	- Elle imprime la valeur résultante de l'évaluation de la formule.
+1. It initializes the local variables: `variables` to store the variables present in the formula, `temp_formula` to create a temporary copy of the formula, `variable_count` to determine the number of variables, `rows` for the total number of rows in the truth table.
+2. It first checks the validity of the formula by calling the `checkFormula` function with the `formula` parameter. If the formula isn't valid, the function returns.
+3. It calls the `getVariables` function to get the variables of the formula, specifying whether they should be sorted or not.
+4. It determines the value of `variable_count` using `std::max_element` function on the `variables` vector.
+5. it prints the column headers and a separator line.
+6. It calculates the total number of rows in the truth table using the binary shift operator (`<<`).
+7. It iterates over each row of the truth table.
+	- for each row, it prints the variables values by iterating over the variables and using the binary shift operator (`>>`) and the mask (`1`) to extract each bit from the variable value.
+	- It replaces the occurrences of the variables in the temporary formula `temp_formula` with the corresponding values (0 or 1) using `std::replace` function.
+	- It evaluates the temporary formula by calling `evalFormula` function with the modified formula.
+	- It prints the value resulting from the evaluation of the formula.
 
-#### Complexité
+#### Complexity
 
-La complexité de cette fonction dépend du nombre de variables distinctes présentes dans la formule, car le nombre de ligne dans la table de vérité est $2^n$, où `n` est le nombre de variables distinctes. Par conséquent, la complexité de cette fonction est $O(2^n)$.
-
+The complexity of this function depends on the number of the distinct variables present in the formula because the number of rows in the truth table is  $2^n$, where `n` is the number of distinct variables. Therefore, the complexity of this function is $O(2^n)$.
 
 ---
-
-
+<a id="ex05"></a>
 <table>
 <tr><th>Exercise 05 - Negation Normal Form </th></tr>
 <tr><td>Allowed mathematical functions : None </tr>
@@ -270,7 +284,7 @@ La complexité de cette fonction dépend du nombre de variables distinctes prés
 <tr><td>Maximum space complexity : N/A</tr>
 </table>
 
-```  
+``` c++  
 const std::string       RSB::negationNormalForm(const std::string& formula)
 {
         std::stack<std::string> stack;
@@ -304,25 +318,24 @@ const std::string       RSB::negationNormalForm(const std::string& formula)
         return stack.top();
 };
 ```
-La fonction `applyNegation` est utilisé pour appliquer la négation à une variable ou à une sous-formule dans une formule booléenne.
+The `applyNegation` is used to apply the negation to a variable or to a subformula in a boolean formula.
 
-La fonction `rewriteFormula` est utilisé pour simplifier une formule booléenne en utilisant des règles de simplication.
+The `rewriteFormula` function is used to simplify a boolean formula using simplification rules.
+The `negationNormalForm` is used to convert a boolean formula to Negation Normal Form (NNF) using `applyNegation` and `rewriteFormula` functions.
 
-La fonction `negationNornalForm` est utilisé pour convertir une formule booléenne en Forme Normale de Négation (NNF) en utilisant les fonctions `applyNegation` et `rewriteFormula`.
+#### How it works:
 
-#### Comment elle fonctionne:
-
-1. Elle utilise une pile `stack` pour stocker les sous-formules intermédiaires.
-2. Elle simplifie la formule initiale en appelant la fonction `rewriteFormula` avec la formule.
-3. Elle parcourt chaque caractère de la formule simplifiée en utilisant une boucle `for`.
-4. Si le caractère est une lettre (une variable), elle l'ajoute simplement à la pile.
-5. Si le caractère est `!`, elle applique la négation à la dernière sous-formule de la pile en utilisant la fonction `applyNegation` puis pousse la sous-formule résultante à la pile.
-6. Si le caractère est `&` ou `|`, elle récupère les deux dernières sous-formules de la pile, les supprime de la pile, puis pousse une nouvelle sous-formule résultante à la pile en utilisant le caractère comme opérateur.
-7. Si le caractère n'est pas une lettre, `!`, `&` ou `|`, une exception "Invalid symbol" est levée.
-8. Une fois que tous les caractères de la formule ont été traités, la fonction renvoye la sous-formule finale, qui se trouve en haut de la pile `stack`. 
+1. It uses a stack to store the intermediate subformulas.
+2. It simplifies the original formula by calling the `rewriteFormula` function with the formula.
+3. It loops through each character of the simplified formula using a `for` loop.
+4. If the character is a letter (a variable), it simply pushes it into the stack.
+5. If the character is `!`, it applies the negation to the last subformula on the stack using `applyNegation` function and then pushes the resulting subformula into the stack.
+6. If the character is `&` or `|`, it retrieves the last two subformulas from the stack, pops them off the stack, then pushes a new resulting subformula into the stack using the character as an operator.
+7. If the character isn't a `!`, `&` or `|` letter, an "Invalid symbol" exception is thrown.
+8. After all the characters in the formula have been processed, the function returns the final subformula which is at the top of the stack.
 
 ---
-
+<a id="ex06"></a>
 <table>
 <tr><th>Exercise 06 - Conjunctive Normal Form </th></tr>
 <tr><td>Allowed mathematical functions : None </tr>
@@ -330,7 +343,7 @@ La fonction `negationNornalForm` est utilisé pour convertir une formule boolée
 <tr><td>Maximum space complexity : N/A</tr>
 </table>
 
-```
+``` c++
 const std::string       RSB::conjunctiveNormalForm(const std::string& formula)
 {
         std::unique_ptr<RPNNode>        cnf;
@@ -351,25 +364,26 @@ const std::string       RSB::conjunctiveNormalForm(const std::string& formula)
         return result;
 };
 ```
-La fonction `rearrangeOnlyAndOr`  vérifie si la formule contient uniquement des opérateurs de conjonction(`&`) ou disjonction(`|`). Si c'est le cas, elle réarrange la formule modifié en déplaçant tous les opérateurs à la fin de la formule, sinon elle renvoie la formule d'origine.
+The `rearrangeOnlyAndOr` function checks if the formula contains only conjunction(`&`) or disjunction(`|`) operators. If it so, it rearranges the modified formula by moving all the operators to the end of the formula, otherwise, it returns the origin formula. 
 
-La fonction `checkAndBeforeOr` vérifie si l'opération de conjonction apparaît avant l'opération de disjonction dans la formule. Si c'est le cas, elle renvoye `true`, sinon elle renovie `false`.
+The `checkAndBeforeOr` function checks if the conjunction operator appears before the disjunction operator in the formula. If so, it returns `true`, otherwise it returns `false`.
 
-Les fonctions `applyDistributiveLaw` et `rearrangeConjunctions` sont utilisées pour manipuler une structure d'arbre représentante une formule en notation polonaise inversée (RPN). `applyDistributiveLaw`  applique la loi distributive à l'arbre de formule. `rearrangeConjunctions` permet de réarranger les conjonctions dans l'arbre de formule.
+The `applyDistributiveLaw` and `rearrangeConjunctions` functions are used to manipulate a tree structure representing a formula in Reverse Polish Notation (RPN). `applyDistributiveLaw` applies the distributive law to the formula tree. `rearrangeConjunctions` allows to rearrange the conjunctions in the formula tree.
 
-La fonction `conjunctiveNormalForm` est utilisé pour convertir une formule booléenne en Form Normal Conjonctive (CNF).
+The `conjunctiveNormalForm` function is used to convert a boolean formula to Conjunctive Normal From (CNF).
 
-#### Comment elle fonctionne:
+#### How it works:
 
-1. Elle vérifie d'abord la validité de la formule en appelant la fonction `checkFormula` avec la formule. Si la formule n'est pas valide, la fonction renvoie la formule d'origine.
-2. Elle applique la négation normale (NNF) à la formule en appelant la fonction `negationNormalForm`.
-3. Elle réarrange les opérations de conjonctions et de disjonctions en appelant la fonction `rearrangeOnlyAndOr`.
-4. Elle vérifie si l'opération de conjonction apparaît avant l'opération de disjonction en appelant la fonction `checkAndBeforeOr`. Si c'est le cas, la fonction applique la loi distributive en appelant la fonction `applyDistributiveLaw`.
-5. Elle réarrange les conjonctions dans l'arbre syntaxique en appelant la fonction `rearrangeConjunctions`.
-6. Elle récupère la formule résultante en parcourant l'arbre syntaxique dans l'orbre préfixe à l'aide de la fonction `preorder`.
-7. Elle renvoie la formule résultante.
+1. It first checks the validity of the formula by calling the `checkFormula` function with the formula. If the formula is not valid, the function returns the origin formula.
+2. It applies the Negation Normal From (NNF) to the formula by calling the `negationNormalForm` function.
+3. It rearranges the conjunction and disjunction operators by calling the `rearrangeOnlyAndOr` function.
+4. It checks if the conjunction operator appears before the disjunction operator by calling the `checkAndBeforeOr` function. If so, the function applies the distributive law by calling the `applyDistributiveLaw` function.
+5. It rearranges the conjunctions in the syntax tree by calling the `rearrangeConjunctions` function.
+6. It retrieves the resulting formula by traversing the syntax tree in prefix order using the `preorder` function.
+7. It returns the resulting formula.
 
 ---
+<a id="ex07"></a>
 <table>
 <tr><th>Exercise 07 - SAT </th></tr>
 <tr><td>Allowed mathematical functions : None </tr>
@@ -378,7 +392,7 @@ La fonction `conjunctiveNormalForm` est utilisé pour convertir une formule bool
 </table>
 
 
-```
+``` c++
 bool    RSB::sat(const std::string& formula)
 {
         std::vector<std::pair<char, size_t> > variables;
@@ -408,31 +422,32 @@ bool    RSB::sat(const std::string& formula)
         return false;
 };
 ```
-La fonction `getVariables` récupère les variables présentes dans une formule booléenne donnée. elle renvoie un vecteur de paires où chaque paire représente une variable et son numéro d'ordre.
 
-La fonction `evalFormula` évalue la formule booléenne répresentée par une chaîne de caractères. elle utilise une pile pour évaluer les opérations et les opérandes.
+The `getVariables` function retrieves the variables present in a given boolean formula. it returns a vector of pairs where each pair represents a variable and its order number.
 
-La fonction `sat` est utilisé pour vérifier si une formule logique donnée est satisfiable, c'est-à-dire s'il existe une affectation de valeurs aux variables de la formule qui rend la formule vraie.
+The `evalFormula` function evaluates the boolean formula represented by a character string. it uses a stack to evaluate operators and operands.
 
-#### Comment elle fonctionne:
+The `sat` function is used to check if a given logic formula is satisfiable, which means if there exists an assignment of values to the variables of the formula that makes the formula true.
 
-1. Elle commence par vérifier si la formule est valide en appelant la fonction `checkFormula`, si la formule n'est pas valide, elle renvoie `false` car elle ne peut pas être satisfiable.
-2. Elle utilise la fonction `getVariables` pour obtenir les variables distinctes présentes dans la formule.
-3. Elle détermine le nombre de lignes nécessaires pour générer les combinaisons possible de valeurs pour les variables. 
-4. Elle itère pour chaque ligne possible de valeurs pour les variables.
-	- pour chaque ligne, elle crée une copie temporaire de la formule initiale.
-	- pour chaque ligne, elle récupère les valeurs des variables en parcourant les variables et en utilisant l'opération de décalage binaire (`>>`) et le masque (`1`) pour extraire chaque bit de la valeur de la variable.
-	- Elle remplace les occurances des variables dans la formule temporaire `temp_formula` par les valeurs correspondantes (0 ou 1) à l'aide de la fonction `std::replace`.
-	- Elle évalue la formule temporaire en appelant la fonction `evalFormula` avec la formule modifée.
-	- Si la formule temporaire est évaluée comme vraie, cela signifie que la formule initiale est satisfiable, et la fonction renvoie `true`.
-5. Si aucune combinaison de valeurs ne satisfait la formule, la fonction renvoie `false`.
+#### How it works:
 
-#### Complexité
+1. It starts by checking if the formula is valid by calling the `checkFormula` function, if the formula isn't valid, it returns `false` because it can't be satisfiable.
+2. It uses the `getVariables` function to get the distinct variables present in the formula.
+3. It determines the number of rows needed to generate the possible combinations of values for the variables.
+4. It iterates through each possible row of values for the variables.
+	- for each row, it creates a temporary copy of the initial formula.
+	- for each row, it retrieves the values of the variables by iterating over the variables and using the binary shift operator (`>>`) and the mask (`1`) to extract each bit from the value of the variable.
+	- It replaces the occurrences of the variables in the temporary formula `temp_formula` with the corresponding values (0 or 1) using the `std::replace` function.
+	- It evaluates the temporary formula by calling the `evalFormula` function with the modified formula.
+	- If the temporary formula is evaluated as true, it means that the initial formula is satisfiable, and the function returns `true`.
+5. If no combination of values satisfies the formula, the function returns `false`.
 
-La complexité de cette fonction dépend du nombre de variables dans la formule. Le nombre total de lignes générées est de 2^n, où `n` est le nombre de variables distinctes. Pour chaque ligne, la fonction effectue une opération de remplacement dans la formule temporaire et évalue la formule modifiée en appelant la fonction `evaleFormule`. Par conséquent, la complexité de cette fonction est de l'ordre de **$O(2^n)$**, où `n` est le nombre de variables distinctes. 
+#### Complexity
 
+The complexity of this function depends on the number of variables in the formula. the total number of rows generated is 2^n, where `n` is the number of distinct variables. For each row, the function performs a replace operation in the temporary formula and evaluates the modified formula by calling the `evalFormula` function. Therefore, the complexity of this function is **$O(2^n)$**, where `n` is the number of distinct variables.
 
 ---
+<a id="ex08"></a>
 <table>
 <tr><th>Exercise 08 - Powerset </th></tr>
 <tr><td>Allowed mathematical functions : None </tr>
@@ -440,7 +455,7 @@ La complexité de cette fonction dépend du nombre de variables dans la formule.
 <tr><td>Maximum space complexity : O(2^n)</tr>
 </table>
 
-```
+``` c++
 static void     generatePowerset(const t_set& set, t_set& current_set, int index, t_powerset& powerset)
 {
         powerset.push_back(current_set);
@@ -460,23 +475,25 @@ t_powerset      RSB::powerset(t_set& set)
         return powerset;
 };
 ```
-Les fonctions `generatePowerset` et `powerset` sont utilisées pour générer le powerset (ensemble des sous-ensembles) d'un ensemble donné.
 
-#### Comment elle fonctionne:
-1. `generatePowerset` est une fonction récursive qui prend en entrée un ensemble `set`, un ensemble `current_set`(qui contient les éléments actuels du sous-ensemble en cours de génération), un `index` (pour suivre la position actuelle lors de la génération), un`powerset` (qui contiendra tous les sous-ensembles générés).
-2. Elle commence par ajouter l'ensemble `current_set` au powerset, car il s'agit d'un sous-ensemble valide.
-3. Ensuite, elle parcourt les éléments de l'ensemble `set` à partir de l'index donné.
-4. Pour chaque élément à partir de l'index, elle l'ajoute à l'ensemble `current_set`, puis elle appelle récursivement la fonction `generatePowerser` en incrémentant l'index de 1. cela permet de générer les sous-ensmeble contenant cet élément.
-5. Après l'appel récursif, elle supprime le dernier élément ajouté à `current_set` en utilisant la fonction `push_back`. Cela permet de revenir à l'état précédent et de générer les sous-ensembles sans cet élément.
-6. La fonction se termine lorsque tous les éléments de l'ensemble `set` ont été parcourus.
-7. Le powerset final est renvoyé.
+The `generatePowerset` and `powerset` functions are used to generate the powerset (set of subsets) from a given set.
 
-#### Complexité
+#### How it works:
 
-La complexité de cette fonction est de l'ordre de **$O(2^n)$**, où `n` est la taille de l'ensemble donné. Cela est dû au fait que le powerset contient 2^n sous-ensembles distincts, et chaque sous-ensemble est généré une fois.
+1. `generatePowerset` is a recursive function that takes as input a `set` set, a `current_set` set (which contains the current elements of the subset being generated), an `index` (to tract the current position during generation), a `powerset` (which will contain all generated subsets).
+2. It starts by adding the `current_set` to the powerset, because it is a valid subset.
+3. Then, it iterates through the elements of the set `set` starting at the given index.
+4. For each element from the index, it adds it to the set `current_set`, then it recursively calls the `generatePowerset` function by incrementing the index by 1. This generates the subsets containing this element.
+5. After the recursive call, it removes the last element added to `current_set` using the `pop_back` function. This makes it possible to return to the previous state and to generate the subsets without this element.
+6. The function terminates when all the elements of the `set` set have been traversed.
+7. The final powerset is returned.
+
+#### Complexity
+
+The complexity of this function is  **$O(2^n)$**, where `n` is the size of the given set. This is because the powerset contains 2^n distinct subsets, and each subset is generated once.
 
 ---
-
+<a id="ex09"></a>
 <table>
 <tr><th>Exercise 09 - Set evaluation </th></tr>
 <tr><td>Allowed mathematical functions : None </tr>
@@ -484,7 +501,7 @@ La complexité de cette fonction est de l'ordre de **$O(2^n)$**, où `n` est la 
 <tr><td>Maximum space complexity : N/A</tr>
 </table>
 
-```
+``` c++
 t_set   RSB::evalSet(const std::string& formula, const t_powerset& sets)
 {
         std::stack<t_set>       stack;
@@ -587,21 +604,22 @@ t_set   RSB::evalSet(const std::string& formula, const t_powerset& sets)
         return stack.top();
 };
 ```
-La fonction `evalSet` est utilisée pour évaluer une formule logique avec des ensembles.
+The `evalSet` function is used to evaluate a logic formula with sets.
 
-#### Comment elle fonctionne:
+#### How it works:
 
-1. Elle crée une pile pour stocker les ensembles temporaires générés lors de l'évaluation de la formule.
-2. Elle crée un vecteur `variables` pour stocker les variables distinctes présentes dans la formule.
-3. Elle crée un ensemble universel `universal_set` qui contient tous les éléments présents dans l'ensemble du powerset. C'est nécessaire pour la manipulation de l'opération de négation.
-4. Elle convertit la formule en Forme Normale de Négation (NNF) en appelant la fonction `negationNormalForm`.
-5. Elle itère sur chaque caractère de la formule convertie:
-	- Si le caractère est une lettre (variable), elle vérifie si la variable a déjà été rencontrée. Si c'est le cas, elle récupère l'ensemble correspondant dans le powerset `sets`, le pousse dans la pile. Sinon elle crée une nouvelle vairable, récupère l'ensemble correspondant dans le powerset `sets` et le pousse dans la pile, tout en ajoutant la variable au vecteur `variables`.
-	- Si le caractère est une opération de négation `!`, elle récupère l'ensemble qui se trouve en haut de la pile, effectue la négation en utilisant l'ensemble universel et place le résultat sur la pile.
-	- Si le caractère est une opération (`&`, `|`, `^`, `=`, `>`), elle récupère les deux ensembles supérieurs de la pile, effectue l'opération correspondante et pousse le résultat dans la pile.
-6. À la fin de l'itération, l'ensemble résultant se trouve au sommet de la pile, et il est renvoyé.
+1. It creates a stack to store the temporary sets generated while evaluating the formula.
+2. It creates a `variables` vector to store the distinct variables present in the formula.
+3. It creates a universal set `universal_set` which contains all the elements present in the set `powerset`. It is necessary for handling the negation operation.
+4. It converts the formula to Negation Normal Form (NNF) by calling the `negationNormalForm` function.
+5. It iterates over each character of the converted formula:
+	- If the character is a letter (variable), it checks if the variable has already been encountered. If so, it retrieves the corresponding set in the `sets` powerset, and pushes it into the stack. Otherwise, it creates a new variable, retrieves the corresponding set from the `sets` powerset and pushes it into the stack, while adding the variable to the `variables` vector.
+	- If the character is a negation operation `!`, it retrieves the set which is located on top of the stack, performs the negation using the universal set, and pushes the result into the stack.
+	- If the character is an operation (`&`, `|`, `^`, `=`, `>`), it retrieves the top two sets from the stack, performs the corresponding operation, and pushes the result into the stack.
+6. At the end of the iteration, the resulting set is located on top of the stack and it is returned.
 
 ---
+<a id="ex10_11"></a>
 <table>
 <tr><th>Exercise 10, 11 - Curve, Inverse function </th></tr>
 <tr><td>Allowed mathematical functions : None </tr>
@@ -609,7 +627,7 @@ La fonction `evalSet` est utilisée pour évaluer une formule logique avec des e
 <tr><td>Maximum space complexity : N/A</tr>
 </table>
 
-```
+``` c++
 #define MAX_VALUE ((1ULL << 32) - 1)
 
 double  RSB::map(unsigned short x, unsigned short y)
@@ -639,15 +657,15 @@ t_vec2s RSB::reverseMap(double n)
 };
 ```
 
-La fonction `map` est utilisée pour mapper deux valeurs entieres non signées (`x` et `y`) en une valeur réelle dans la plage [0, 1].
+The `map` function is used to map two unsigned integer values (`x` and `y`) into a real value in the range [0, 1].
 
-1. Elle combine les valeurs `x` et `y` en une valeur de entière de 64 bits en utilisant un décalage de bits et un **OU** logique.
-2. Ensuite, elle convertit cette valeur entière en un double et la divise par la constante `MAX_VALUE` pour obtenir une valeur réelle dans la plage [0, 1].
-3. La valeur réelle est renvoyée.
+1. It combines the values `x` and `y` into a 64-bit integer value using a bit shift and a **OR** logic.
+2. Then, it converts this integer value into a double and divides it by the constant `MAX_VALUE` to get a real value in the range [0, 1].
+3. The real value is returned.
 
-La fonction `reverseMap` effectue l'opération inverse de la fonction `map`.
+The `reverseMap` function performs the reverse operation of the `map` function.
 
-1. Elle prend en entrée une valeur réelle dans la plage [0, 1].
-2. La valeur d'abord est multipliée par la constante `MAX_VALUE` pour obtenir une valeur entière de 64 bits.
-3. Ensuite, cette valeur entière est utilisée pour extraire les valeurs `x` et `y` à l'aide d'opérations de décalage de bits et de masquage.
-4. Les valeurs `x` et `y` sont stockées dans une structure `t_vec2s` et renvoyées.
+1. It takes as input a real value in the range [0, 1]/
+2. The value first is multiplied by the constant `MAX_VALUE` to get a 64-bit integer value.
+3. Then, this integer value is used to extract the `x` and `y` values using the bit shift and masking operations.
+4. The `x` and `y` values are stored in a `t_vec2s` structure and returned.
